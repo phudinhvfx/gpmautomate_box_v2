@@ -1,0 +1,27 @@
+{
+  "$type": "GPMAutomateEditor.Models.PhoneEditor, GPMAutomateEditor.Models",
+  "main_logic": {
+    "$type": "GPMAutomateEditor.Models.NormalBlockNode, GPMAutomateEditor.Models",
+    "nodes": [
+      {
+        "$type": "GPMAutomateEditor.Models.ActionNode, GPMAutomateEditor.Models",
+        "type": 70,
+        "element_xpath": null,
+        "output_variable_name": null,
+        "delay": "0,0",
+        "continue_on_error": false,
+        "id": "f9513379-47ec-42b6-8eb7-475a0fe50ee3",
+        "display_text": "Call workflow",
+        "raw_input": "[{\"Key\":\"REF_FILE\",\"Value\":\"flow_1\"}]",
+        "comment": "run TikTok Lite watch scroll and Like"
+      }
+    ],
+    "expanded": true,
+    "continue_on_error": false,
+    "id": "d6d59787-76e4-44a2-977b-a9107aa29780",
+    "display_text": null,
+    "raw_input": null,
+    "comment": "Main workflow: run flow_1 TikTok Lite watch scroll and Like"
+  },
+  "name": "Main"
+}

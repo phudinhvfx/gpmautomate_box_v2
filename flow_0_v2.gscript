@@ -1,0 +1,167 @@
+{
+  "$type": "GPMAutomateEditor.Models.SubEditor, GPMAutomateEditor.Models",
+  "body": {
+    "$type": "GPMAutomateEditor.Models.NormalBlockNode, GPMAutomateEditor.Models",
+    "nodes": [
+      {
+        "$type": "GPMAutomateEditor.Models.NormalBlockNode, GPMAutomateEditor.Models",
+        "nodes": [],
+        "expanded": true,
+        "continue_on_error": false,
+        "id": "00c1b1e8-8b61-4fc2-a5cf-2915d3f3e7a9",
+        "display_text": "Normal block",
+        "raw_input": null,
+        "comment": "GHI CHÚ FLOW 0 V2\n- Không ép Android user trong lệnh ADB: PhoneExecuteAdb của Runtime GPM lỗi với Android user phụ.\n- Thử lần lượt các activity TikTok Lite đã kiểm chứng; chỉ dừng thành công khi activity tương ứng ở foreground.\n- Tạm chờ 1.5–2.5 giây cho feed ổn định. Đây chưa phải là xác minh feed.\n- Sẽ thêm Wait element khi có XPath TikTok Lite được người vận hành cung cấp."
+      },
+      {
+        "$type": "GPMAutomateEditor.Models.ActionNode, GPMAutomateEditor.Models",
+        "type": 114,
+        "element_xpath": null,
+        "output_variable_name": "legacyLaunchResult",
+        "delay": "1000,1500",
+        "continue_on_error": true,
+        "id": "260b3ad8-e7d5-4c36-9ca9-1151cb7e0d39",
+        "display_text": "Execute ADB",
+        "raw_input": "[{\"Key\":\"SCRIPT\",\"Value\":\"shell am start -n com.zhiliaoapp.musically.go/.mini.MainActivity\"}]",
+        "comment": "try legacy TikTok Lite launcher"
+      },
+      {
+        "$type": "GPMAutomateEditor.Models.ActionNode, GPMAutomateEditor.Models",
+        "type": 114,
+        "element_xpath": null,
+        "output_variable_name": "legacyForeground",
+        "delay": "0,0",
+        "continue_on_error": true,
+        "id": "fa1c7f6d-e77d-4d52-8d9d-9964f7cd94a2",
+        "display_text": "Execute ADB",
+        "raw_input": "[{\"Key\":\"SCRIPT\",\"Value\":\"shell dumpsys activity activities | grep topResumedActivity | grep com.zhiliaoapp.musically.go\"}]",
+        "comment": "check legacy Lite foreground"
+      },
+      {
+        "$type": "GPMAutomateEditor.Models.IfBlockNode, GPMAutomateEditor.Models",
+        "condition": "$legacyForeground contains \"topResumedActivity\"",
+        "nodes": [
+          {
+            "$type": "GPMAutomateEditor.Models.ActionNode, GPMAutomateEditor.Models",
+            "type": 1,
+            "element_xpath": null,
+            "output_variable_name": "tiktokLitePackage",
+            "delay": "0,0",
+            "continue_on_error": false,
+            "id": "f4b1ad51-7f84-49b3-b4c0-01335ec0d39a",
+            "display_text": "Set variable",
+            "raw_input": "[{\"Key\":\"VALUE\",\"Value\":\"com.zhiliaoapp.musically.go\"},{\"Key\":\"ALLOW_USER_INPUT\",\"Value\":\"False\"},{\"Key\":\"USER_INPUT_TYPE\",\"Value\":\"Text\"},{\"Key\":\"COMBOBOX_DATA\",\"Value\":\"\"},{\"Key\":\"INPUT_REQUIRED\",\"Value\":\"False\"}]",
+            "comment": "select legacy Lite variant"
+          }
+        ],
+        "expanded": true,
+        "continue_on_error": false,
+        "id": "4075a0c2-891d-4195-9483-71dd2c0a6731",
+        "display_text": "If",
+        "raw_input": "[{\"Key\":\"CONDITION\",\"Value\":\"$legacyForeground contains \\\"topResumedActivity\\\"\"}]",
+        "comment": "legacy TikTok Lite opened"
+      },
+      {
+        "$type": "GPMAutomateEditor.Models.ElseBlockNode, GPMAutomateEditor.Models",
+        "nodes": [
+          {
+            "$type": "GPMAutomateEditor.Models.ActionNode, GPMAutomateEditor.Models",
+            "type": 114,
+            "element_xpath": null,
+            "output_variable_name": "modernLaunchResult",
+            "delay": "1000,1500",
+            "continue_on_error": true,
+            "id": "32bc8787-b67d-4a48-9be5-f4360ff92550",
+            "display_text": "Execute ADB",
+            "raw_input": "[{\"Key\":\"SCRIPT\",\"Value\":\"shell am start -n com.tiktok.lite.go/com.zhiliaoapp.musically.go.mini.MainActivity\"}]",
+            "comment": "try modern TikTok Lite launcher"
+          },
+          {
+            "$type": "GPMAutomateEditor.Models.ActionNode, GPMAutomateEditor.Models",
+            "type": 114,
+            "element_xpath": null,
+            "output_variable_name": "modernForeground",
+            "delay": "0,0",
+            "continue_on_error": true,
+            "id": "3d4bd276-d6d0-4382-b8df-5f8f7c0508b3",
+            "display_text": "Execute ADB",
+            "raw_input": "[{\"Key\":\"SCRIPT\",\"Value\":\"shell dumpsys activity activities | grep topResumedActivity | grep com.tiktok.lite.go\"}]",
+            "comment": "check modern Lite foreground"
+          },
+          {
+            "$type": "GPMAutomateEditor.Models.IfBlockNode, GPMAutomateEditor.Models",
+            "condition": "$modernForeground contains \"topResumedActivity\"",
+            "nodes": [
+              {
+                "$type": "GPMAutomateEditor.Models.ActionNode, GPMAutomateEditor.Models",
+                "type": 1,
+                "element_xpath": null,
+                "output_variable_name": "tiktokLitePackage",
+                "delay": "0,0",
+                "continue_on_error": false,
+                "id": "2644834f-d0f2-432d-9bc1-169bd6d82d02",
+                "display_text": "Set variable",
+                "raw_input": "[{\"Key\":\"VALUE\",\"Value\":\"com.tiktok.lite.go\"},{\"Key\":\"ALLOW_USER_INPUT\",\"Value\":\"False\"},{\"Key\":\"USER_INPUT_TYPE\",\"Value\":\"Text\"},{\"Key\":\"COMBOBOX_DATA\",\"Value\":\"\"},{\"Key\":\"INPUT_REQUIRED\",\"Value\":\"False\"}]",
+                "comment": "select modern Lite variant"
+              }
+            ],
+            "expanded": true,
+            "continue_on_error": false,
+            "id": "02fd9ad4-2f40-4614-a8db-ca134a7c3e26",
+            "display_text": "If",
+            "raw_input": "[{\"Key\":\"CONDITION\",\"Value\":\"$modernForeground contains \\\"topResumedActivity\\\"\"}]",
+            "comment": "modern TikTok Lite opened"
+          },
+          {
+            "$type": "GPMAutomateEditor.Models.ElseBlockNode, GPMAutomateEditor.Models",
+            "nodes": [
+              {
+                "$type": "GPMAutomateEditor.Models.ActionNode, GPMAutomateEditor.Models",
+                "type": 117,
+                "element_xpath": null,
+                "output_variable_name": null,
+                "delay": "0,0",
+                "continue_on_error": false,
+                "id": "717d442e-06fb-4c59-bf2d-fb753b269d75",
+                "display_text": "Throw",
+                "raw_input": "[{\"Key\":\"MESSAGE\",\"Value\":\"TIKTOK_LITE_FOREGROUND_NOT_CONFIRMED\"}]",
+                "comment": "stop when neither Lite launcher reaches foreground"
+              }
+            ],
+            "expanded": true,
+            "continue_on_error": false,
+            "id": "9833934a-88d1-4de2-b84e-b5fd1cfc4cb3",
+            "display_text": "Else",
+            "raw_input": null,
+            "comment": "neither TikTok Lite variant opened"
+          }
+        ],
+        "expanded": true,
+        "continue_on_error": false,
+        "id": "e8dce95d-fb1f-4a93-bcd1-1c4b31fa8650",
+        "display_text": "Else",
+        "raw_input": null,
+        "comment": "legacy Lite not foreground; try modern variant"
+      },
+      {
+        "$type": "GPMAutomateEditor.Models.ActionNode, GPMAutomateEditor.Models",
+        "type": 7,
+        "element_xpath": null,
+        "output_variable_name": null,
+        "delay": "0,0",
+        "continue_on_error": false,
+        "id": "96a45ef4-3dde-4e51-b25e-7e8439cc522f",
+        "display_text": "Delay",
+        "raw_input": "[{\"Key\":\"MIN\",\"Value\":\"1500\"},{\"Key\":\"MAX\",\"Value\":\"2500\"}]",
+        "comment": "wait TikTok Lite feed..."
+      }
+    ],
+    "expanded": true,
+    "continue_on_error": false,
+    "id": "cb209274-1c61-4df5-a290-e4d462ad2c0d",
+    "display_text": null,
+    "raw_input": null,
+    "comment": null
+  },
+  "name": "Main"
+}

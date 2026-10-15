@@ -1,0 +1,470 @@
+{
+  "$type": "GPMAutomateEditor.Models.SubEditor, GPMAutomateEditor.Models",
+  "body": {
+    "$type": "GPMAutomateEditor.Models.NormalBlockNode, GPMAutomateEditor.Models",
+    "nodes": [
+      {
+        "$type": "GPMAutomateEditor.Models.NormalBlockNode, GPMAutomateEditor.Models",
+        "nodes": [],
+        "expanded": true,
+        "continue_on_error": false,
+        "id": "a3a22e66-5b34-4383-8edb-d03ea55c4492",
+        "display_text": "Normal block",
+        "raw_input": null,
+        "comment": "GHI CHÚ FLOW 1\n- Chờ feed For You, xem video 3-8 giây, sau đó vuốt mặc định 5 lượt. Mỗi lượt sinh tọa độ từ tỷ lệ kích thước màn hình, chờ video mới và xem 3-8 giây.\n- Kích thước màn hình được đọc bằng ADB wm size; nếu Runtime không trả được, flow dùng fallback Device 05: 1440x2960.\n- Sau lượt vuốt cuối, random 1-9: chỉ 1 hoặc 2 thực hiện Like; các số còn lại ghi LIKE_NOT_SELECTED.\n- Like dùng tâm cố định 1333,1672 trên Device 05 với jitter +/-8 px. Không xác minh Liked vì XPath và Image Search không ổn định."
+      },
+      {
+        "$type": "GPMAutomateEditor.Models.ActionNode, GPMAutomateEditor.Models",
+        "type": 120,
+        "element_xpath": "//node[@text=\"For You\" and @class=\"android.widget.Button\"]",
+        "output_variable_name": "",
+        "delay": "0,0",
+        "continue_on_error": false,
+        "id": "19ccddde-5a9a-4e7f-bdf7-868bd47bd1e5",
+        "display_text": "Wait element",
+        "raw_input": "[{\"Key\":\"TIME_OUT\",\"Value\":\"20\"}]",
+        "comment": "wait TikTok Lite For You"
+      },
+      {
+        "$type": "GPMAutomateEditor.Models.ActionNode, GPMAutomateEditor.Models",
+        "type": 1,
+        "element_xpath": null,
+        "output_variable_name": "swipeCount",
+        "delay": "0,0",
+        "continue_on_error": false,
+        "id": "0cbd8ff3-9591-4eaf-a9a8-46ebc876e12f",
+        "display_text": "Set variable",
+        "raw_input": "[{\"Key\":\"VALUE\",\"Value\":\"5\"},{\"Key\":\"ALLOW_USER_INPUT\",\"Value\":\"False\"},{\"Key\":\"USER_INPUT_TYPE\",\"Value\":\"Text\"},{\"Key\":\"COMBOBOX_DATA\",\"Value\":\"\"},{\"Key\":\"INPUT_REQUIRED\",\"Value\":\"False\"}]",
+        "comment": "set default swipe count"
+      },
+      {
+        "$type": "GPMAutomateEditor.Models.ActionNode, GPMAutomateEditor.Models",
+        "type": 1,
+        "element_xpath": null,
+        "output_variable_name": "screenWidth",
+        "delay": "0,0",
+        "continue_on_error": false,
+        "id": "ed8e4c01-e5de-41f2-a8ba-f34c4e881a1c",
+        "display_text": "Set variable",
+        "raw_input": "[{\"Key\":\"VALUE\",\"Value\":\"1440\"},{\"Key\":\"ALLOW_USER_INPUT\",\"Value\":\"False\"},{\"Key\":\"USER_INPUT_TYPE\",\"Value\":\"Text\"},{\"Key\":\"COMBOBOX_DATA\",\"Value\":\"\"},{\"Key\":\"INPUT_REQUIRED\",\"Value\":\"False\"}]",
+        "comment": "set fallback screen width"
+      },
+      {
+        "$type": "GPMAutomateEditor.Models.ActionNode, GPMAutomateEditor.Models",
+        "type": 1,
+        "element_xpath": null,
+        "output_variable_name": "screenHeight",
+        "delay": "0,0",
+        "continue_on_error": false,
+        "id": "8b3047e5-38ed-4da4-a3ae-b8e5bb4f065d",
+        "display_text": "Set variable",
+        "raw_input": "[{\"Key\":\"VALUE\",\"Value\":\"2960\"},{\"Key\":\"ALLOW_USER_INPUT\",\"Value\":\"False\"},{\"Key\":\"USER_INPUT_TYPE\",\"Value\":\"Text\"},{\"Key\":\"COMBOBOX_DATA\",\"Value\":\"\"},{\"Key\":\"INPUT_REQUIRED\",\"Value\":\"False\"}]",
+        "comment": "set fallback screen height"
+      },
+      {
+        "$type": "GPMAutomateEditor.Models.ActionNode, GPMAutomateEditor.Models",
+        "type": 114,
+        "element_xpath": null,
+        "output_variable_name": "screenSizeRaw",
+        "delay": "0,0",
+        "continue_on_error": true,
+        "id": "dcdd04d6-934e-4a5d-b8c3-1b07b5ba54b0",
+        "display_text": "Execute ADB",
+        "raw_input": "[{\"Key\":\"SCRIPT\",\"Value\":\"shell wm size\"}]",
+        "comment": "read screen size"
+      },
+      {
+        "$type": "GPMAutomateEditor.Models.ActionNode, GPMAutomateEditor.Models",
+        "type": 82,
+        "element_xpath": null,
+        "output_variable_name": "screenWidthRead",
+        "delay": "0,0",
+        "continue_on_error": true,
+        "id": "9c623077-0c71-4853-8d87-511b6e75999a",
+        "display_text": "Regex",
+        "raw_input": "[{\"Key\":\"TEXT\",\"Value\":\"$screenSizeRaw\"},{\"Key\":\"REGEX\",\"Value\":\"(?<=Physical size: )\\\\d+(?=x)\"}]",
+        "comment": "read physical screen width"
+      },
+      {
+        "$type": "GPMAutomateEditor.Models.ActionNode, GPMAutomateEditor.Models",
+        "type": 82,
+        "element_xpath": null,
+        "output_variable_name": "screenHeightRead",
+        "delay": "0,0",
+        "continue_on_error": true,
+        "id": "1c4604f3-7492-4121-b451-671bb4561188",
+        "display_text": "Regex",
+        "raw_input": "[{\"Key\":\"TEXT\",\"Value\":\"$screenSizeRaw\"},{\"Key\":\"REGEX\",\"Value\":\"(?<=x)\\\\d+\"}]",
+        "comment": "read physical screen height"
+      },
+      {
+        "$type": "GPMAutomateEditor.Models.IfBlockNode, GPMAutomateEditor.Models",
+        "condition": "$screenWidthRead != \"\"",
+        "nodes": [
+          {
+            "$type": "GPMAutomateEditor.Models.ActionNode, GPMAutomateEditor.Models",
+            "type": 1,
+            "element_xpath": null,
+            "output_variable_name": "screenWidth",
+            "delay": "0,0",
+            "continue_on_error": false,
+            "id": "62d51de7-2595-4d8f-98ce-d6f4189ddf6a",
+            "display_text": "Set variable",
+            "raw_input": "[{\"Key\":\"VALUE\",\"Value\":\"$screenWidthRead\"},{\"Key\":\"ALLOW_USER_INPUT\",\"Value\":\"False\"},{\"Key\":\"USER_INPUT_TYPE\",\"Value\":\"Text\"},{\"Key\":\"COMBOBOX_DATA\",\"Value\":\"\"},{\"Key\":\"INPUT_REQUIRED\",\"Value\":\"False\"}]",
+            "comment": "use detected screen width"
+          }
+        ],
+        "expanded": true,
+        "continue_on_error": false,
+        "id": "73a51749-37f3-4b8b-a3e8-772b5251f82a",
+        "display_text": "If",
+        "raw_input": "[{\"Key\":\"CONDITION\",\"Value\":\"$screenWidthRead != \\\"\\\"\"}]",
+        "comment": "screen width detected"
+      },
+      {
+        "$type": "GPMAutomateEditor.Models.IfBlockNode, GPMAutomateEditor.Models",
+        "condition": "$screenHeightRead != \"\"",
+        "nodes": [
+          {
+            "$type": "GPMAutomateEditor.Models.ActionNode, GPMAutomateEditor.Models",
+            "type": 1,
+            "element_xpath": null,
+            "output_variable_name": "screenHeight",
+            "delay": "0,0",
+            "continue_on_error": false,
+            "id": "38826a57-2b88-43f2-b8cc-849fd5cf8c2f",
+            "display_text": "Set variable",
+            "raw_input": "[{\"Key\":\"VALUE\",\"Value\":\"$screenHeightRead\"},{\"Key\":\"ALLOW_USER_INPUT\",\"Value\":\"False\"},{\"Key\":\"USER_INPUT_TYPE\",\"Value\":\"Text\"},{\"Key\":\"COMBOBOX_DATA\",\"Value\":\"\"},{\"Key\":\"INPUT_REQUIRED\",\"Value\":\"False\"}]",
+            "comment": "use detected screen height"
+          }
+        ],
+        "expanded": true,
+        "continue_on_error": false,
+        "id": "f7992a8a-3c7a-4b69-9988-3fde4209bc58",
+        "display_text": "If",
+        "raw_input": "[{\"Key\":\"CONDITION\",\"Value\":\"$screenHeightRead != \\\"\\\"\"}]",
+        "comment": "screen height detected"
+      },
+      {
+        "$type": "GPMAutomateEditor.Models.ActionNode, GPMAutomateEditor.Models",
+        "type": 7,
+        "element_xpath": null,
+        "output_variable_name": "",
+        "delay": "0,0",
+        "continue_on_error": false,
+        "id": "2ca4e7f3-5372-4360-94ef-269644f589a4",
+        "display_text": "Delay",
+        "raw_input": "[{\"Key\":\"MIN\",\"Value\":\"3000\"},{\"Key\":\"MAX\",\"Value\":\"8000\"}]",
+        "comment": "watch current video..."
+      },
+      {
+        "$type": "GPMAutomateEditor.Models.ForBlockNode, GPMAutomateEditor.Models",
+        "start": "0",
+        "end": "$swipeCount",
+        "step": "1",
+        "nodes": [
+          {
+            "$type": "GPMAutomateEditor.Models.ActionNode, GPMAutomateEditor.Models",
+            "type": 11,
+            "element_xpath": null,
+            "output_variable_name": "scrollStartXUnit",
+            "delay": "0,0",
+            "continue_on_error": false,
+            "id": "a4542fea-5674-43eb-98f1-fd7ad5a4c654",
+            "display_text": "Random number",
+            "raw_input": "[{\"Key\":\"MIN\",\"Value\":\"8\"},{\"Key\":\"MAX\",\"Value\":\"12\"}]",
+            "comment": "pick start x ratio"
+          },
+          {
+            "$type": "GPMAutomateEditor.Models.ActionNode, GPMAutomateEditor.Models",
+            "type": 11,
+            "element_xpath": null,
+            "output_variable_name": "scrollStartYUnit",
+            "delay": "0,0",
+            "continue_on_error": false,
+            "id": "16df7f49-67bc-42f7-aa2f-ed460752158d",
+            "display_text": "Random number",
+            "raw_input": "[{\"Key\":\"MIN\",\"Value\":\"16\"},{\"Key\":\"MAX\",\"Value\":\"17\"}]",
+            "comment": "pick start y ratio"
+          },
+          {
+            "$type": "GPMAutomateEditor.Models.ActionNode, GPMAutomateEditor.Models",
+            "type": 11,
+            "element_xpath": null,
+            "output_variable_name": "scrollEndXUnit",
+            "delay": "0,0",
+            "continue_on_error": false,
+            "id": "c02288e5-ae3f-44e4-9e8a-f153d009d57a",
+            "display_text": "Random number",
+            "raw_input": "[{\"Key\":\"MIN\",\"Value\":\"8\"},{\"Key\":\"MAX\",\"Value\":\"12\"}]",
+            "comment": "pick end x ratio"
+          },
+          {
+            "$type": "GPMAutomateEditor.Models.ActionNode, GPMAutomateEditor.Models",
+            "type": 11,
+            "element_xpath": null,
+            "output_variable_name": "scrollEndYUnit",
+            "delay": "0,0",
+            "continue_on_error": false,
+            "id": "e5ac5c6c-1dfd-46f8-a7c9-44f25ebbc320",
+            "display_text": "Random number",
+            "raw_input": "[{\"Key\":\"MIN\",\"Value\":\"8\"},{\"Key\":\"MAX\",\"Value\":\"9\"}]",
+            "comment": "pick end y ratio"
+          },
+          {
+            "$type": "GPMAutomateEditor.Models.ActionNode, GPMAutomateEditor.Models",
+            "type": 11,
+            "element_xpath": null,
+            "output_variable_name": "scrollDuration",
+            "delay": "0,0",
+            "continue_on_error": false,
+            "id": "f7c6271f-59b6-4e50-af7c-e56e749ee305",
+            "display_text": "Random number",
+            "raw_input": "[{\"Key\":\"MIN\",\"Value\":\"450\"},{\"Key\":\"MAX\",\"Value\":\"700\"}]",
+            "comment": "pick scroll duration"
+          },
+          {
+            "$type": "GPMAutomateEditor.Models.ActionNode, GPMAutomateEditor.Models",
+            "type": 12,
+            "element_xpath": null,
+            "output_variable_name": "scrollStartX",
+            "delay": "0,0",
+            "continue_on_error": false,
+            "id": "e2e98f7d-8403-4aee-b2ea-c2e4d1f52a90",
+            "display_text": "Math execute",
+            "raw_input": "[{\"Key\":\"MATH_EXPRESSION\",\"Value\":\"$screenWidth*$scrollStartXUnit/20\"}]",
+            "comment": "scale start x"
+          },
+          {
+            "$type": "GPMAutomateEditor.Models.ActionNode, GPMAutomateEditor.Models",
+            "type": 12,
+            "element_xpath": null,
+            "output_variable_name": "scrollStartY",
+            "delay": "0,0",
+            "continue_on_error": false,
+            "id": "ec9b2f83-a561-4e0b-9332-029bc2489d1f",
+            "display_text": "Math execute",
+            "raw_input": "[{\"Key\":\"MATH_EXPRESSION\",\"Value\":\"$screenHeight*$scrollStartYUnit/20\"}]",
+            "comment": "scale start y"
+          },
+          {
+            "$type": "GPMAutomateEditor.Models.ActionNode, GPMAutomateEditor.Models",
+            "type": 12,
+            "element_xpath": null,
+            "output_variable_name": "scrollEndX",
+            "delay": "0,0",
+            "continue_on_error": false,
+            "id": "d097b0f8-3762-47dd-92ac-84ef09571ab3",
+            "display_text": "Math execute",
+            "raw_input": "[{\"Key\":\"MATH_EXPRESSION\",\"Value\":\"$screenWidth*$scrollEndXUnit/20\"}]",
+            "comment": "scale end x"
+          },
+          {
+            "$type": "GPMAutomateEditor.Models.ActionNode, GPMAutomateEditor.Models",
+            "type": 12,
+            "element_xpath": null,
+            "output_variable_name": "scrollEndY",
+            "delay": "0,0",
+            "continue_on_error": false,
+            "id": "be78c017-f346-4736-a412-ca35026208f1",
+            "display_text": "Math execute",
+            "raw_input": "[{\"Key\":\"MATH_EXPRESSION\",\"Value\":\"$screenHeight*$scrollEndYUnit/20\"}]",
+            "comment": "scale end y"
+          },
+          {
+            "$type": "GPMAutomateEditor.Models.ActionNode, GPMAutomateEditor.Models",
+            "type": 1,
+            "element_xpath": null,
+            "output_variable_name": "scrollStartPos",
+            "delay": "0,0",
+            "continue_on_error": false,
+            "id": "5a4c0ed6-2512-49b4-b4d6-703b023ecb12",
+            "display_text": "Set variable",
+            "raw_input": "[{\"Key\":\"VALUE\",\"Value\":\"$scrollStartX,$scrollStartY\"},{\"Key\":\"ALLOW_USER_INPUT\",\"Value\":\"False\"},{\"Key\":\"USER_INPUT_TYPE\",\"Value\":\"Text\"},{\"Key\":\"COMBOBOX_DATA\",\"Value\":\"\"},{\"Key\":\"INPUT_REQUIRED\",\"Value\":\"False\"}]",
+            "comment": "set scroll start point"
+          },
+          {
+            "$type": "GPMAutomateEditor.Models.ActionNode, GPMAutomateEditor.Models",
+            "type": 1,
+            "element_xpath": null,
+            "output_variable_name": "scrollEndPos",
+            "delay": "0,0",
+            "continue_on_error": false,
+            "id": "8e452bb9-7e8c-45ce-94e3-57dab0d08831",
+            "display_text": "Set variable",
+            "raw_input": "[{\"Key\":\"VALUE\",\"Value\":\"$scrollEndX,$scrollEndY\"},{\"Key\":\"ALLOW_USER_INPUT\",\"Value\":\"False\"},{\"Key\":\"USER_INPUT_TYPE\",\"Value\":\"Text\"},{\"Key\":\"COMBOBOX_DATA\",\"Value\":\"\"},{\"Key\":\"INPUT_REQUIRED\",\"Value\":\"False\"}]",
+            "comment": "set scroll end point"
+          },
+          {
+            "$type": "GPMAutomateEditor.Models.ActionNode, GPMAutomateEditor.Models",
+            "type": 108,
+            "element_xpath": null,
+            "output_variable_name": "",
+            "delay": "0,0",
+            "continue_on_error": false,
+            "id": "334eaad9-225e-482a-8d4b-2bc6fe7cbe2e",
+            "display_text": "Scroll",
+            "raw_input": "[{\"Key\":\"SCROLL_TYPE\",\"Value\":\"POINTS\"},{\"Key\":\"DIRECTION\",\"Value\":\"Up\"},{\"Key\":\"START_POS\",\"Value\":\"$scrollStartPos\"},{\"Key\":\"END_POS\",\"Value\":\"$scrollEndPos\"},{\"Key\":\"DURATION_MS\",\"Value\":\"$scrollDuration\"},{\"Key\":\"POS\",\"Value\":\"\"},{\"Key\":\"ACTION_TYPE\",\"Value\":\"Down\"}]",
+            "comment": "scroll next TikTok video"
+          },
+          {
+            "$type": "GPMAutomateEditor.Models.ActionNode, GPMAutomateEditor.Models",
+            "type": 7,
+            "element_xpath": null,
+            "output_variable_name": "",
+            "delay": "0,0",
+            "continue_on_error": false,
+            "id": "8c7860c7-1f63-49f6-b801-e4edfe317537",
+            "display_text": "Delay",
+            "raw_input": "[{\"Key\":\"MIN\",\"Value\":\"3000\"},{\"Key\":\"MAX\",\"Value\":\"8000\"}]",
+            "comment": "watch new video..."
+          }
+        ],
+        "expanded": true,
+        "continue_on_error": false,
+        "id": "86f16e1a-7e1b-45cd-87b7-8307b42afbd9",
+        "display_text": "For",
+        "raw_input": "[{\"Key\":\"START\",\"Value\":\"0\"},{\"Key\":\"END\",\"Value\":\"$swipeCount\"},{\"Key\":\"STEP\",\"Value\":\"1\"}]",
+        "comment": "scroll and watch N videos"
+      },
+      {
+        "$type": "GPMAutomateEditor.Models.ActionNode, GPMAutomateEditor.Models",
+        "type": 11,
+        "element_xpath": null,
+        "output_variable_name": "actionRoll",
+        "delay": "0,0",
+        "continue_on_error": false,
+        "id": "375a0a1e-d751-4a8a-bac9-dd0297d0a655",
+        "display_text": "Random number",
+        "raw_input": "[{\"Key\":\"MIN\",\"Value\":\"1\"},{\"Key\":\"MAX\",\"Value\":\"9\"}]",
+        "comment": "pick Like action"
+      },
+      {
+        "$type": "GPMAutomateEditor.Models.IfBlockNode, GPMAutomateEditor.Models",
+        "condition": "$actionRoll = 1 || $actionRoll = 2",
+        "nodes": [
+          {
+            "$type": "GPMAutomateEditor.Models.ActionNode, GPMAutomateEditor.Models",
+            "type": 11,
+            "element_xpath": null,
+            "output_variable_name": "likeJitterX",
+            "delay": "0,0",
+            "continue_on_error": false,
+            "id": "5a66907f-7d35-47cd-91cb-e0b25b5a52a1",
+            "display_text": "Random number",
+            "raw_input": "[{\"Key\":\"MIN\",\"Value\":\"-8\"},{\"Key\":\"MAX\",\"Value\":\"8\"}]",
+            "comment": "pick Like x jitter"
+          },
+          {
+            "$type": "GPMAutomateEditor.Models.ActionNode, GPMAutomateEditor.Models",
+            "type": 11,
+            "element_xpath": null,
+            "output_variable_name": "likeJitterY",
+            "delay": "0,0",
+            "continue_on_error": false,
+            "id": "05b94572-6090-405a-972b-65a484dab0a3",
+            "display_text": "Random number",
+            "raw_input": "[{\"Key\":\"MIN\",\"Value\":\"-8\"},{\"Key\":\"MAX\",\"Value\":\"8\"}]",
+            "comment": "pick Like y jitter"
+          },
+          {
+            "$type": "GPMAutomateEditor.Models.ActionNode, GPMAutomateEditor.Models",
+            "type": 12,
+            "element_xpath": null,
+            "output_variable_name": "likeTapX",
+            "delay": "0,0",
+            "continue_on_error": false,
+            "id": "5805d14f-95ac-4bc1-a30c-eb1a4861d387",
+            "display_text": "Math execute",
+            "raw_input": "[{\"Key\":\"MATH_EXPRESSION\",\"Value\":\"1333+$likeJitterX\"}]",
+            "comment": "make Like tap x"
+          },
+          {
+            "$type": "GPMAutomateEditor.Models.ActionNode, GPMAutomateEditor.Models",
+            "type": 12,
+            "element_xpath": null,
+            "output_variable_name": "likeTapY",
+            "delay": "0,0",
+            "continue_on_error": false,
+            "id": "fddc0a1a-c7db-462a-82a6-8e6b505db98e",
+            "display_text": "Math execute",
+            "raw_input": "[{\"Key\":\"MATH_EXPRESSION\",\"Value\":\"1672+$likeJitterY\"}]",
+            "comment": "make Like tap y"
+          },
+          {
+            "$type": "GPMAutomateEditor.Models.ActionNode, GPMAutomateEditor.Models",
+            "type": 1,
+            "element_xpath": null,
+            "output_variable_name": "likeTapPos",
+            "delay": "0,0",
+            "continue_on_error": false,
+            "id": "1fcaec93-9b4c-4c94-a607-26667e0516fe",
+            "display_text": "Set variable",
+            "raw_input": "[{\"Key\":\"VALUE\",\"Value\":\"$likeTapX,$likeTapY\"},{\"Key\":\"ALLOW_USER_INPUT\",\"Value\":\"False\"},{\"Key\":\"USER_INPUT_TYPE\",\"Value\":\"Text\"},{\"Key\":\"COMBOBOX_DATA\",\"Value\":\"\"},{\"Key\":\"INPUT_REQUIRED\",\"Value\":\"False\"}]",
+            "comment": "set Like tap position"
+          },
+          {
+            "$type": "GPMAutomateEditor.Models.ActionNode, GPMAutomateEditor.Models",
+            "type": 107,
+            "element_xpath": null,
+            "output_variable_name": null,
+            "delay": "0,0",
+            "continue_on_error": false,
+            "id": "e72b3428-b626-4f83-a670-74df4683e46c",
+            "display_text": "Touch",
+            "raw_input": "[{\"Key\":\"TOUCH_TYPE\",\"Value\":\"TOUCH_POS\"},{\"Key\":\"XPATH\",\"Value\":\"\"},{\"Key\":\"POS\",\"Value\":\"$likeTapPos\"},{\"Key\":\"MODE\",\"Value\":\"Normal\"}]",
+            "comment": "touch Like with jitter"
+          },
+          {
+            "$type": "GPMAutomateEditor.Models.ActionNode, GPMAutomateEditor.Models",
+            "type": 1,
+            "element_xpath": null,
+            "output_variable_name": "likeResult",
+            "delay": "0,0",
+            "continue_on_error": false,
+            "id": "9f0db8c8-1f43-4eb4-b1fc-e2ebc860aa73",
+            "display_text": "Set variable",
+            "raw_input": "[{\"Key\":\"VALUE\",\"Value\":\"LIKE_TAP_SENT_ROLL_$actionRoll\"},{\"Key\":\"ALLOW_USER_INPUT\",\"Value\":\"False\"},{\"Key\":\"USER_INPUT_TYPE\",\"Value\":\"Text\"},{\"Key\":\"COMBOBOX_DATA\",\"Value\":\"\"},{\"Key\":\"INPUT_REQUIRED\",\"Value\":\"False\"}]",
+            "comment": "log Like tap sent"
+          }
+        ],
+        "expanded": true,
+        "continue_on_error": false,
+        "id": "6a733fb5-f5cf-4745-b824-3915a6225e76",
+        "display_text": "If",
+        "raw_input": "[{\"Key\":\"CONDITION\",\"Value\":\"$actionRoll = 1 || $actionRoll = 2\"}]",
+        "comment": "Like selected"
+      },
+      {
+        "$type": "GPMAutomateEditor.Models.ElseBlockNode, GPMAutomateEditor.Models",
+        "nodes": [
+          {
+            "$type": "GPMAutomateEditor.Models.ActionNode, GPMAutomateEditor.Models",
+            "type": 1,
+            "element_xpath": null,
+            "output_variable_name": "likeResult",
+            "delay": "0,0",
+            "continue_on_error": false,
+            "id": "d733ae66-99a4-4c10-befc-3e858f8a5656",
+            "display_text": "Set variable",
+            "raw_input": "[{\"Key\":\"VALUE\",\"Value\":\"LIKE_NOT_SELECTED_ROLL_$actionRoll\"},{\"Key\":\"ALLOW_USER_INPUT\",\"Value\":\"False\"},{\"Key\":\"USER_INPUT_TYPE\",\"Value\":\"Text\"},{\"Key\":\"COMBOBOX_DATA\",\"Value\":\"\"},{\"Key\":\"INPUT_REQUIRED\",\"Value\":\"False\"}]",
+            "comment": "log Like not selected"
+          }
+        ],
+        "expanded": true,
+        "continue_on_error": false,
+        "id": "f8b91e46-16cd-40e1-a3df-dd5ee94344d4",
+        "display_text": "Else",
+        "raw_input": null,
+        "comment": "Like not selected"
+      }
+    ],
+    "expanded": true,
+    "continue_on_error": false,
+    "id": "5068adf9-7c5e-4c5a-b7c1-2d2d72f01f56",
+    "display_text": "Normal block",
+    "raw_input": null,
+    "comment": "flow_1 TikTok Lite watch scroll and Like"
+  },
+  "name": "Main"
+}
