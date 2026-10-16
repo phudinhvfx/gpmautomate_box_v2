@@ -8,25 +8,29 @@
 | Loại project | GPM Automate Phone |
 | Feed ổn định | `For You` — XPath `//node[@text="For You" and @class="android.widget.Button"]` |
 | Thiết bị đã canary | Device 05, bố cục `1440 × 2960` |
-| Main hiện tại | Chỉ gọi `flow_1` |
-| Số lượt vuốt mặc định | `5` |
-| Cơ hội Like | 2/9 (khi `$actionRoll` là 1 hoặc 2) |
+| Main hiện tại | Gọi `flow_2` |
+| `flow_1` | 5 lượt vuốt và cơ hội Like 2/9 |
+| `flow_2` | 3 lượt vuốt video, sau đó đọc Comment panel |
 
 Không chạy GPM Phone đồng thời với một workflow BoxPhone V3 khác trên cùng device. Việc chọn device/user/proxy nằm ngoài phạm vi của project này.
 
 ```mermaid
 flowchart TD
   A[flow_0_v2 chạy độc lập] --> B[TikTok Lite foreground]
-  C[Main src.gscript] --> D[flow_1]
+  C[Main src.gscript] --> D[flow_2]
   B --> D
   D --> E[Chờ XPath For You]
   E --> F[Đọc wm size / fallback]
   F --> G[Xem 3-8 giây]
-  G --> H[Vuốt lên 5 lượt, mỗi lượt xem 3-8 giây]
-  H --> I[Random 1-9]
-  I -->|1 hoặc 2| J[Chạm Like với jitter]
-  I -->|3-9| K[Ghi LIKE_NOT_SELECTED]
-  J --> L[Ghi LIKE_TAP_SENT]
+  G --> H[Vuốt lên 3 lượt, mỗi lượt xem 3-8 giây]
+  H --> I[Chạm Comment tại điểm jitter]
+  I --> J[Xác minh Comment panel]
+  J --> K[Vuốt lên trong panel 2-4 lượt]
+  K --> L[Tìm và chạm Close]
+  L --> M{Panel còn thấy?}
+  M -->|Không| N[Ghi COMMENT_PANEL_CLOSED]
+  M -->|Có| O[Tìm/chạm Close lần hai]
+  O --> P[Xác minh lại]
 ```
 
 ## `flow_0_v2`: mở TikTok Lite
@@ -90,6 +94,43 @@ Sau lượt vuốt cuối:
 
 Không đặt Delay 5 giây hay Image Search để xác minh Liked sau chạm: ảnh trái tim đỏ không cho kết quả đủ ổn định trên nền video thay đổi. Điều này cố ý; không diễn giải `LIKE_TAP_SENT` là Like đã được TikTok ghi nhận.
 
+## `flow_2`: xem video, đọc comment và đóng panel
+
+### 1. Feed, kích thước và 3 video mới
+
+`flow_2` dùng cùng gate **For You**, `shell wm size` và fallback `1440 × 2960` như `flow_1`. Sau khi xem video hiện tại 3–8 giây, flow dùng `PhoneScroll` `SCROLL_TYPE=POINTS`, `DIRECTION=Up` để qua 3 video mới. Mỗi lượt dùng vùng tỷ lệ 40–60% chiều rộng, 80–85% chiều cao xuống 40–45% chiều cao, trong 450–700 ms, rồi chờ 3–8 giây.
+
+### 2. Mở và xác minh Comment panel
+
+- `$commentRoll` hiện được sinh trong khoảng `1–2`; điều kiện `1` hoặc `2` do đó luôn đi vào nhánh comment. Không tự đổi thành `1–9` nếu chưa có yêu cầu thay đổi hành vi.
+- Điểm Comment cơ sở là `1337,1897`; `$commentJitterX/Y` là `-15…15` nên mỗi lần chạm nằm trong vùng ±15 px.
+- Sau chạm, flow chờ 6–10 giây, rồi `Image exists` asset `tiktok_verifypanelcomment.img64` với ngưỡng `0.8`.
+- Không xác minh được asset thì ghi `COMMENT_PANEL_NOT_VERIFIED` và không vuốt/đóng mù.
+
+### 3. Đọc comment đúng vùng panel
+
+Sau khi asset panel được xác minh, flow chọn 2–4 lượt vuốt. Mỗi lượt chỉ dùng `PhoneScroll` theo điểm với `DIRECTION=Up`:
+
+| Tham số | Khoảng |
+| --- | --- |
+| X | 360–1080 |
+| Điểm bắt đầu Y | 1850–2250 |
+| Điểm kết thúc Y | 1150–1500 |
+| Thời lượng | 350–550 ms |
+
+Điểm bắt đầu thấp hơn điểm kết thúc, kết hợp `DIRECTION=Up`, giữ thao tác là scroll danh sách comment. Không có nhánh scroll xuống, vì thao tác sai vùng/hướng có thể chạm vùng video hoặc kích hoạt ô nhập ở bài không có comment.
+
+### 4. Đóng panel, kể cả trường hợp bàn phím ảo
+
+1. Chờ 2 giây sau lượt scroll cuối.
+2. `Image search` `tiktok_closecomment.img64` (ngưỡng `0.8`), rồi chạm tọa độ tìm được.
+3. Chờ 3 giây và tìm lại `tiktok_verifypanelcomment.img64`.
+4. Nếu panel đã biến mất, ghi `COMMENT_PANEL_CLOSED`.
+5. Nếu panel vẫn còn, flow tìm lại Close, chạm lần hai, chờ 3 giây và xác minh lại. Nhánh này xử lý bài không có comment, nơi lượt chạm Close đầu chỉ có thể đóng bàn phím ảo che panel.
+6. Lần thử hai ghi một trong `COMMENT_PANEL_CLOSED_AFTER_RETRY`, `COMMENT_PANEL_STILL_OPEN_AFTER_RETRY`, hoặc `COMMENT_CLOSE_RETRY_ICON_NOT_FOUND`.
+
+Không coi `COMMENT_PANEL_CLOSED*` là bằng chứng phổ quát cho mọi phiên bản UI: đó là kết quả asset probe hiện tại và cần canary lại khi TikTok Lite hoặc layout đổi.
+
 ## Bằng chứng hiện có
 
 | Hạng mục | Kết quả |
@@ -109,5 +150,12 @@ Không đặt Delay 5 giây hay Image Search để xác minh Liked sau chạm: �
 4. Xem các `$scrollStartPos`, `$scrollEndPos` không chạm khu vực điều hướng/bottom bar.
 5. Ghi nhận `$actionRoll` và `$likeResult`. Lượt 3–9 không Like là hành vi đúng.
 6. Với lượt 1–2, chỉ đánh giá bằng quan sát UI nếu cần; không lấy Image Search Liked làm bằng chứng pass/fail.
+
+### Canary cho `flow_2`
+
+1. Main đã nạp `src.gscript` hiện gọi `flow_2`; TikTok Lite đang ở **For You**.
+2. Kiểm tra `$screenSizeRaw`, `$commentPos` và `COMMENT_TAP_TARGET_<x,y>` trước khi đánh giá phần comment.
+3. Chỉ tiếp tục nếu có `COMMENT_PANEL_OPEN`; quan sát 2–4 lượt vuốt vẫn nằm trong danh sách comment.
+4. Sau Close, xác nhận `$flow2Result` là `COMMENT_PANEL_CLOSED` hoặc `COMMENT_PANEL_CLOSED_AFTER_RETRY`. Nếu còn `COMMENT_PANEL_STILL_OPEN_AFTER_RETRY`, dừng và lưu bằng chứng UI tối thiểu để cập nhật asset/toạ độ.
 
 Nếu XPath **For You** timeout, dừng flow và khôi phục app/feed trước khi chạy lại. Không thêm click mù hoặc selector suy đoán vào flow này.

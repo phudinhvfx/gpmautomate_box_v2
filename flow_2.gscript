@@ -1,0 +1,947 @@
+{
+  "$type": "GPMAutomateEditor.Models.SubEditor, GPMAutomateEditor.Models",
+  "body": {
+    "$type": "GPMAutomateEditor.Models.NormalBlockNode, GPMAutomateEditor.Models",
+    "nodes": [
+      {
+        "$type": "GPMAutomateEditor.Models.ActionNode, GPMAutomateEditor.Models",
+        "type": 120,
+        "element_xpath": "//node[@text=\"For You\" and @class=\"android.widget.Button\"]",
+        "output_variable_name": "",
+        "delay": "0,0",
+        "continue_on_error": false,
+        "id": "f2010001-9000-4000-8000-000000000001",
+        "display_text": "Wait element",
+        "raw_input": "[{\"Key\":\"TIME_OUT\",\"Value\":\"20\"}]",
+        "comment": "wait TikTok Lite For You"
+      },
+      {
+        "$type": "GPMAutomateEditor.Models.ActionNode, GPMAutomateEditor.Models",
+        "type": 1,
+        "element_xpath": null,
+        "output_variable_name": "videoSwipeCount",
+        "delay": "0,0",
+        "continue_on_error": false,
+        "id": "f2010001-9000-4000-8000-000000000002",
+        "display_text": "Set variable",
+        "raw_input": "[{\"Key\":\"VALUE\",\"Value\":\"3\"},{\"Key\":\"ALLOW_USER_INPUT\",\"Value\":\"False\"},{\"Key\":\"USER_INPUT_TYPE\",\"Value\":\"Text\"},{\"Key\":\"COMBOBOX_DATA\",\"Value\":\"\"},{\"Key\":\"INPUT_REQUIRED\",\"Value\":\"False\"}]",
+        "comment": "set default video swipe count"
+      },
+      {
+        "$type": "GPMAutomateEditor.Models.ActionNode, GPMAutomateEditor.Models",
+        "type": 1,
+        "element_xpath": null,
+        "output_variable_name": "screenWidth",
+        "delay": "0,0",
+        "continue_on_error": false,
+        "id": "f2010001-9000-4000-8000-000000000003",
+        "display_text": "Set variable",
+        "raw_input": "[{\"Key\":\"VALUE\",\"Value\":\"1440\"},{\"Key\":\"ALLOW_USER_INPUT\",\"Value\":\"False\"},{\"Key\":\"USER_INPUT_TYPE\",\"Value\":\"Text\"},{\"Key\":\"COMBOBOX_DATA\",\"Value\":\"\"},{\"Key\":\"INPUT_REQUIRED\",\"Value\":\"False\"}]",
+        "comment": "set fallback screen width"
+      },
+      {
+        "$type": "GPMAutomateEditor.Models.ActionNode, GPMAutomateEditor.Models",
+        "type": 1,
+        "element_xpath": null,
+        "output_variable_name": "screenHeight",
+        "delay": "0,0",
+        "continue_on_error": false,
+        "id": "f2010001-9000-4000-8000-000000000004",
+        "display_text": "Set variable",
+        "raw_input": "[{\"Key\":\"VALUE\",\"Value\":\"2960\"},{\"Key\":\"ALLOW_USER_INPUT\",\"Value\":\"False\"},{\"Key\":\"USER_INPUT_TYPE\",\"Value\":\"Text\"},{\"Key\":\"COMBOBOX_DATA\",\"Value\":\"\"},{\"Key\":\"INPUT_REQUIRED\",\"Value\":\"False\"}]",
+        "comment": "set fallback screen height"
+      },
+      {
+        "$type": "GPMAutomateEditor.Models.ActionNode, GPMAutomateEditor.Models",
+        "type": 114,
+        "element_xpath": null,
+        "output_variable_name": "screenSizeRaw",
+        "delay": "0,0",
+        "continue_on_error": true,
+        "id": "f2010001-9000-4000-8000-000000000005",
+        "display_text": "Execute ADB",
+        "raw_input": "[{\"Key\":\"SCRIPT\",\"Value\":\"shell wm size\"}]",
+        "comment": "read screen size"
+      },
+      {
+        "$type": "GPMAutomateEditor.Models.ActionNode, GPMAutomateEditor.Models",
+        "type": 82,
+        "element_xpath": null,
+        "output_variable_name": "screenWidthRead",
+        "delay": "0,0",
+        "continue_on_error": true,
+        "id": "f2010001-9000-4000-8000-000000000006",
+        "display_text": "Regex",
+        "raw_input": "[{\"Key\":\"TEXT\",\"Value\":\"$screenSizeRaw\"},{\"Key\":\"REGEX\",\"Value\":\"(?<=Physical size: )\\\\d+(?=x)\"}]",
+        "comment": "read physical screen width"
+      },
+      {
+        "$type": "GPMAutomateEditor.Models.ActionNode, GPMAutomateEditor.Models",
+        "type": 82,
+        "element_xpath": null,
+        "output_variable_name": "screenHeightRead",
+        "delay": "0,0",
+        "continue_on_error": true,
+        "id": "f2010001-9000-4000-8000-000000000007",
+        "display_text": "Regex",
+        "raw_input": "[{\"Key\":\"TEXT\",\"Value\":\"$screenSizeRaw\"},{\"Key\":\"REGEX\",\"Value\":\"(?<=x)\\\\d+\"}]",
+        "comment": "read physical screen height"
+      },
+      {
+        "$type": "GPMAutomateEditor.Models.IfBlockNode, GPMAutomateEditor.Models",
+        "condition": "$screenWidthRead != \"\"",
+        "nodes": [
+          {
+            "$type": "GPMAutomateEditor.Models.ActionNode, GPMAutomateEditor.Models",
+            "type": 1,
+            "element_xpath": null,
+            "output_variable_name": "screenWidth",
+            "delay": "0,0",
+            "continue_on_error": false,
+            "id": "f2010001-9000-4000-8000-000000000008",
+            "display_text": "Set variable",
+            "raw_input": "[{\"Key\":\"VALUE\",\"Value\":\"$screenWidthRead\"},{\"Key\":\"ALLOW_USER_INPUT\",\"Value\":\"False\"},{\"Key\":\"USER_INPUT_TYPE\",\"Value\":\"Text\"},{\"Key\":\"COMBOBOX_DATA\",\"Value\":\"\"},{\"Key\":\"INPUT_REQUIRED\",\"Value\":\"False\"}]",
+            "comment": "use detected screen width"
+          }
+        ],
+        "expanded": true,
+        "continue_on_error": false,
+        "id": "f2010001-9000-4000-8000-000000000009",
+        "display_text": "If",
+        "raw_input": "[{\"Key\":\"CONDITION\",\"Value\":\"$screenWidthRead != \\\"\\\"\"}]",
+        "comment": "screen width detected"
+      },
+      {
+        "$type": "GPMAutomateEditor.Models.IfBlockNode, GPMAutomateEditor.Models",
+        "condition": "$screenHeightRead != \"\"",
+        "nodes": [
+          {
+            "$type": "GPMAutomateEditor.Models.ActionNode, GPMAutomateEditor.Models",
+            "type": 1,
+            "element_xpath": null,
+            "output_variable_name": "screenHeight",
+            "delay": "0,0",
+            "continue_on_error": false,
+            "id": "f2010001-9000-4000-8000-000000000010",
+            "display_text": "Set variable",
+            "raw_input": "[{\"Key\":\"VALUE\",\"Value\":\"$screenHeightRead\"},{\"Key\":\"ALLOW_USER_INPUT\",\"Value\":\"False\"},{\"Key\":\"USER_INPUT_TYPE\",\"Value\":\"Text\"},{\"Key\":\"COMBOBOX_DATA\",\"Value\":\"\"},{\"Key\":\"INPUT_REQUIRED\",\"Value\":\"False\"}]",
+            "comment": "use detected screen height"
+          }
+        ],
+        "expanded": true,
+        "continue_on_error": false,
+        "id": "f2010001-9000-4000-8000-000000000011",
+        "display_text": "If",
+        "raw_input": "[{\"Key\":\"CONDITION\",\"Value\":\"$screenHeightRead != \\\"\\\"\"}]",
+        "comment": "screen height detected"
+      },
+      {
+        "$type": "GPMAutomateEditor.Models.ActionNode, GPMAutomateEditor.Models",
+        "type": 7,
+        "element_xpath": null,
+        "output_variable_name": "",
+        "delay": "0,0",
+        "continue_on_error": false,
+        "id": "f2010001-9000-4000-8000-000000000012",
+        "display_text": "Delay",
+        "raw_input": "[{\"Key\":\"MIN\",\"Value\":\"3000\"},{\"Key\":\"MAX\",\"Value\":\"8000\"}]",
+        "comment": "watch current video..."
+      },
+      {
+        "$type": "GPMAutomateEditor.Models.ForBlockNode, GPMAutomateEditor.Models",
+        "start": "0",
+        "end": "$videoSwipeCount",
+        "step": "1",
+        "nodes": [
+          {
+            "$type": "GPMAutomateEditor.Models.ActionNode, GPMAutomateEditor.Models",
+            "type": 11,
+            "element_xpath": null,
+            "output_variable_name": "scrollStartXUnit",
+            "delay": "0,0",
+            "continue_on_error": false,
+            "id": "f2010001-9000-4000-8000-000000000013",
+            "display_text": "Random number",
+            "raw_input": "[{\"Key\":\"MIN\",\"Value\":\"8\"},{\"Key\":\"MAX\",\"Value\":\"12\"}]",
+            "comment": "pick start x ratio"
+          },
+          {
+            "$type": "GPMAutomateEditor.Models.ActionNode, GPMAutomateEditor.Models",
+            "type": 11,
+            "element_xpath": null,
+            "output_variable_name": "scrollStartYUnit",
+            "delay": "0,0",
+            "continue_on_error": false,
+            "id": "f2010001-9000-4000-8000-000000000014",
+            "display_text": "Random number",
+            "raw_input": "[{\"Key\":\"MIN\",\"Value\":\"16\"},{\"Key\":\"MAX\",\"Value\":\"17\"}]",
+            "comment": "pick start y ratio"
+          },
+          {
+            "$type": "GPMAutomateEditor.Models.ActionNode, GPMAutomateEditor.Models",
+            "type": 11,
+            "element_xpath": null,
+            "output_variable_name": "scrollEndXUnit",
+            "delay": "0,0",
+            "continue_on_error": false,
+            "id": "f2010001-9000-4000-8000-000000000015",
+            "display_text": "Random number",
+            "raw_input": "[{\"Key\":\"MIN\",\"Value\":\"8\"},{\"Key\":\"MAX\",\"Value\":\"12\"}]",
+            "comment": "pick end x ratio"
+          },
+          {
+            "$type": "GPMAutomateEditor.Models.ActionNode, GPMAutomateEditor.Models",
+            "type": 11,
+            "element_xpath": null,
+            "output_variable_name": "scrollEndYUnit",
+            "delay": "0,0",
+            "continue_on_error": false,
+            "id": "f2010001-9000-4000-8000-000000000016",
+            "display_text": "Random number",
+            "raw_input": "[{\"Key\":\"MIN\",\"Value\":\"8\"},{\"Key\":\"MAX\",\"Value\":\"9\"}]",
+            "comment": "pick end y ratio"
+          },
+          {
+            "$type": "GPMAutomateEditor.Models.ActionNode, GPMAutomateEditor.Models",
+            "type": 11,
+            "element_xpath": null,
+            "output_variable_name": "scrollDuration",
+            "delay": "0,0",
+            "continue_on_error": false,
+            "id": "f2010001-9000-4000-8000-000000000017",
+            "display_text": "Random number",
+            "raw_input": "[{\"Key\":\"MIN\",\"Value\":\"450\"},{\"Key\":\"MAX\",\"Value\":\"700\"}]",
+            "comment": "pick video scroll duration"
+          },
+          {
+            "$type": "GPMAutomateEditor.Models.ActionNode, GPMAutomateEditor.Models",
+            "type": 12,
+            "element_xpath": null,
+            "output_variable_name": "scrollStartX",
+            "delay": "0,0",
+            "continue_on_error": false,
+            "id": "f2010001-9000-4000-8000-000000000018",
+            "display_text": "Math execute",
+            "raw_input": "[{\"Key\":\"MATH_EXPRESSION\",\"Value\":\"$screenWidth*$scrollStartXUnit/20\"}]",
+            "comment": "scale start x"
+          },
+          {
+            "$type": "GPMAutomateEditor.Models.ActionNode, GPMAutomateEditor.Models",
+            "type": 12,
+            "element_xpath": null,
+            "output_variable_name": "scrollStartY",
+            "delay": "0,0",
+            "continue_on_error": false,
+            "id": "f2010001-9000-4000-8000-000000000019",
+            "display_text": "Math execute",
+            "raw_input": "[{\"Key\":\"MATH_EXPRESSION\",\"Value\":\"$screenHeight*$scrollStartYUnit/20\"}]",
+            "comment": "scale start y"
+          },
+          {
+            "$type": "GPMAutomateEditor.Models.ActionNode, GPMAutomateEditor.Models",
+            "type": 12,
+            "element_xpath": null,
+            "output_variable_name": "scrollEndX",
+            "delay": "0,0",
+            "continue_on_error": false,
+            "id": "f2010001-9000-4000-8000-000000000020",
+            "display_text": "Math execute",
+            "raw_input": "[{\"Key\":\"MATH_EXPRESSION\",\"Value\":\"$screenWidth*$scrollEndXUnit/20\"}]",
+            "comment": "scale end x"
+          },
+          {
+            "$type": "GPMAutomateEditor.Models.ActionNode, GPMAutomateEditor.Models",
+            "type": 12,
+            "element_xpath": null,
+            "output_variable_name": "scrollEndY",
+            "delay": "0,0",
+            "continue_on_error": false,
+            "id": "f2010001-9000-4000-8000-000000000021",
+            "display_text": "Math execute",
+            "raw_input": "[{\"Key\":\"MATH_EXPRESSION\",\"Value\":\"$screenHeight*$scrollEndYUnit/20\"}]",
+            "comment": "scale end y"
+          },
+          {
+            "$type": "GPMAutomateEditor.Models.ActionNode, GPMAutomateEditor.Models",
+            "type": 1,
+            "element_xpath": null,
+            "output_variable_name": "scrollStartPos",
+            "delay": "0,0",
+            "continue_on_error": false,
+            "id": "f2010001-9000-4000-8000-000000000022",
+            "display_text": "Set variable",
+            "raw_input": "[{\"Key\":\"VALUE\",\"Value\":\"$scrollStartX,$scrollStartY\"},{\"Key\":\"ALLOW_USER_INPUT\",\"Value\":\"False\"},{\"Key\":\"USER_INPUT_TYPE\",\"Value\":\"Text\"},{\"Key\":\"COMBOBOX_DATA\",\"Value\":\"\"},{\"Key\":\"INPUT_REQUIRED\",\"Value\":\"False\"}]",
+            "comment": "set video scroll start point"
+          },
+          {
+            "$type": "GPMAutomateEditor.Models.ActionNode, GPMAutomateEditor.Models",
+            "type": 1,
+            "element_xpath": null,
+            "output_variable_name": "scrollEndPos",
+            "delay": "0,0",
+            "continue_on_error": false,
+            "id": "f2010001-9000-4000-8000-000000000023",
+            "display_text": "Set variable",
+            "raw_input": "[{\"Key\":\"VALUE\",\"Value\":\"$scrollEndX,$scrollEndY\"},{\"Key\":\"ALLOW_USER_INPUT\",\"Value\":\"False\"},{\"Key\":\"USER_INPUT_TYPE\",\"Value\":\"Text\"},{\"Key\":\"COMBOBOX_DATA\",\"Value\":\"\"},{\"Key\":\"INPUT_REQUIRED\",\"Value\":\"False\"}]",
+            "comment": "set video scroll end point"
+          },
+          {
+            "$type": "GPMAutomateEditor.Models.ActionNode, GPMAutomateEditor.Models",
+            "type": 108,
+            "element_xpath": null,
+            "output_variable_name": null,
+            "delay": "0,0",
+            "continue_on_error": false,
+            "id": "f2010001-9000-4000-8000-000000000024",
+            "display_text": "Scroll",
+            "raw_input": "[{\"Key\":\"SCROLL_TYPE\",\"Value\":\"POINTS\"},{\"Key\":\"DIRECTION\",\"Value\":\"Up\"},{\"Key\":\"START_POS\",\"Value\":\"$scrollStartPos\"},{\"Key\":\"END_POS\",\"Value\":\"$scrollEndPos\"},{\"Key\":\"DURATION_MS\",\"Value\":\"$scrollDuration\"},{\"Key\":\"POS\",\"Value\":\"\"},{\"Key\":\"ACTION_TYPE\",\"Value\":\"Down\"}]",
+            "comment": "scroll next TikTok video"
+          },
+          {
+            "$type": "GPMAutomateEditor.Models.ActionNode, GPMAutomateEditor.Models",
+            "type": 7,
+            "element_xpath": null,
+            "output_variable_name": "",
+            "delay": "0,0",
+            "continue_on_error": false,
+            "id": "f2010001-9000-4000-8000-000000000025",
+            "display_text": "Delay",
+            "raw_input": "[{\"Key\":\"MIN\",\"Value\":\"3000\"},{\"Key\":\"MAX\",\"Value\":\"8000\"}]",
+            "comment": "watch new video..."
+          }
+        ],
+        "expanded": false,
+        "continue_on_error": false,
+        "id": "f2010001-9000-4000-8000-000000000026",
+        "display_text": "For",
+        "raw_input": "[{\"Key\":\"START\",\"Value\":\"0\"},{\"Key\":\"END\",\"Value\":\"$videoSwipeCount\"},{\"Key\":\"STEP\",\"Value\":\"1\"}]",
+        "comment": "scroll three new TikTok videos"
+      },
+      {
+        "$type": "GPMAutomateEditor.Models.ActionNode, GPMAutomateEditor.Models",
+        "type": 11,
+        "element_xpath": null,
+        "output_variable_name": "commentRoll",
+        "delay": "0,0",
+        "continue_on_error": false,
+        "id": "f2010001-9000-4000-8000-000000000027",
+        "display_text": "Random number",
+        "raw_input": "[{\"Key\":\"MIN\",\"Value\":\"1\"},{\"Key\":\"MAX\",\"Value\":\"2\"}]",
+        "comment": "pick comment action"
+      },
+      {
+        "$type": "GPMAutomateEditor.Models.IfBlockNode, GPMAutomateEditor.Models",
+        "condition": "$commentRoll = 1 || $commentRoll = 2",
+        "nodes": [
+          {
+            "$type": "GPMAutomateEditor.Models.ActionNode, GPMAutomateEditor.Models",
+            "type": 11,
+            "element_xpath": null,
+            "output_variable_name": "commentJitterX",
+            "delay": "0,0",
+            "continue_on_error": false,
+            "id": "4a389732-9648-4eb6-a964-c9da5608a041",
+            "display_text": "Random number",
+            "raw_input": "[{\"Key\":\"MIN\",\"Value\":\"-15\"},{\"Key\":\"MAX\",\"Value\":\"15\"}]",
+            "comment": "pick Comment x jitter"
+          },
+          {
+            "$type": "GPMAutomateEditor.Models.ActionNode, GPMAutomateEditor.Models",
+            "type": 11,
+            "element_xpath": null,
+            "output_variable_name": "commentJitterY",
+            "delay": "0,0",
+            "continue_on_error": false,
+            "id": "825fe764-cab0-4ec9-9b93-486e33c6727d",
+            "display_text": "Random number",
+            "raw_input": "[{\"Key\":\"MIN\",\"Value\":\"-15\"},{\"Key\":\"MAX\",\"Value\":\"15\"}]",
+            "comment": "pick Comment y jitter"
+          },
+          {
+            "$type": "GPMAutomateEditor.Models.ActionNode, GPMAutomateEditor.Models",
+            "type": 12,
+            "element_xpath": null,
+            "output_variable_name": "commentTapX",
+            "delay": "0,0",
+            "continue_on_error": false,
+            "id": "e0d1d0f5-9930-4ba4-a783-f381d64b0f4e",
+            "display_text": "Math execute",
+            "raw_input": "[{\"Key\":\"MATH_EXPRESSION\",\"Value\":\"1337+$commentJitterX\"}]",
+            "comment": "make Comment tap x"
+          },
+          {
+            "$type": "GPMAutomateEditor.Models.ActionNode, GPMAutomateEditor.Models",
+            "type": 12,
+            "element_xpath": null,
+            "output_variable_name": "commentTapY",
+            "delay": "0,0",
+            "continue_on_error": false,
+            "id": "146fcf7c-9594-45b0-8a5f-19aaf354b1e5",
+            "display_text": "Math execute",
+            "raw_input": "[{\"Key\":\"MATH_EXPRESSION\",\"Value\":\"1897+$commentJitterY\"}]",
+            "comment": "make Comment tap y"
+          },
+          {
+            "$type": "GPMAutomateEditor.Models.ActionNode, GPMAutomateEditor.Models",
+            "type": 1,
+            "element_xpath": null,
+            "output_variable_name": "commentPos",
+            "delay": "0,0",
+            "continue_on_error": false,
+            "id": "c759aa6f-b7c9-4315-b976-2bd3b59985c5",
+            "display_text": "Set variable",
+            "raw_input": "[{\"Key\":\"VALUE\",\"Value\":\"$commentTapX,$commentTapY\"},{\"Key\":\"ALLOW_USER_INPUT\",\"Value\":\"False\"},{\"Key\":\"USER_INPUT_TYPE\",\"Value\":\"Text\"},{\"Key\":\"COMBOBOX_DATA\",\"Value\":\"\"},{\"Key\":\"INPUT_REQUIRED\",\"Value\":\"False\"}]",
+            "comment": "set tested Comment position with jitter"
+          },
+          {
+            "$type": "GPMAutomateEditor.Models.IfBlockNode, GPMAutomateEditor.Models",
+            "condition": "$commentPos != \"\"",
+            "nodes": [
+              {
+                "$type": "GPMAutomateEditor.Models.ActionNode, GPMAutomateEditor.Models",
+                "type": 1,
+                "element_xpath": null,
+                "output_variable_name": "flow2Result",
+                "delay": "0,0",
+                "continue_on_error": false,
+                "id": "8ddde0c5-6644-4d0c-bcb3-4b1e2620080e",
+                "display_text": "Set variable",
+                "raw_input": "[{\"Key\":\"VALUE\",\"Value\":\"COMMENT_TAP_TARGET_$commentPos\"},{\"Key\":\"ALLOW_USER_INPUT\",\"Value\":\"False\"},{\"Key\":\"USER_INPUT_TYPE\",\"Value\":\"Text\"},{\"Key\":\"COMBOBOX_DATA\",\"Value\":\"\"},{\"Key\":\"INPUT_REQUIRED\",\"Value\":\"False\"}]",
+                "comment": "log Comment tap coordinate"
+              },
+              {
+                "$type": "GPMAutomateEditor.Models.ActionNode, GPMAutomateEditor.Models",
+                "type": 107,
+                "element_xpath": null,
+                "output_variable_name": null,
+                "delay": "0,0",
+                "continue_on_error": false,
+                "id": "45cae426-5b86-469a-9d23-33da0a3c5d2b",
+                "display_text": "Touch",
+                "raw_input": "[{\"Key\":\"TOUCH_TYPE\",\"Value\":\"TOUCH_POS\"},{\"Key\":\"XPATH\",\"Value\":\"\"},{\"Key\":\"POS\",\"Value\":\"$commentPos\"},{\"Key\":\"MODE\",\"Value\":\"Normal\"}]",
+                "comment": "touch found Comment position"
+              },
+              {
+                "$type": "GPMAutomateEditor.Models.ActionNode, GPMAutomateEditor.Models",
+                "type": 7,
+                "element_xpath": null,
+                "output_variable_name": null,
+                "delay": "0,0",
+                "continue_on_error": false,
+                "id": "61c442a1-aed5-47f7-a411-0252f5bf99db",
+                "display_text": "Delay",
+                "raw_input": "[{\"Key\":\"MIN\",\"Value\":\"6000\"},{\"Key\":\"MAX\",\"Value\":\"10000\"}]",
+                "comment": "wait comment panel..."
+              },
+              {
+                "$type": "GPMAutomateEditor.Models.ActionNode, GPMAutomateEditor.Models",
+                "type": 32,
+                "element_xpath": null,
+                "output_variable_name": "commentPanelExists",
+                "delay": "0,0",
+                "continue_on_error": false,
+                "id": "c6f4a8f2-7974-4b24-8e38-574cb37a879a",
+                "display_text": "Image exists",
+                "raw_input": "[{\"Key\":\"IMG\",\"Value\":\"tiktok_verifypanelcomment.img64\"},{\"Key\":\"THRESH_HOLD\",\"Value\":\"0.8\"},{\"Key\":\"TRUE_COLOR\",\"Value\":\"No\"}]",
+                "comment": "verify TikTok comment panel"
+              },
+              {
+                "$type": "GPMAutomateEditor.Models.IfBlockNode, GPMAutomateEditor.Models",
+                "condition": "$commentPanelExists = \"true\"",
+                "nodes": [
+                  {
+                    "$type": "GPMAutomateEditor.Models.ActionNode, GPMAutomateEditor.Models",
+                    "type": 1,
+                    "element_xpath": null,
+                    "output_variable_name": "flow2Result",
+                    "delay": "0,0",
+                    "continue_on_error": false,
+                    "id": "12ed3d42-3a17-44e8-93dd-7b54c0e93907",
+                    "display_text": "Set variable",
+                    "raw_input": "[{\"Key\":\"VALUE\",\"Value\":\"COMMENT_PANEL_OPEN\"},{\"Key\":\"ALLOW_USER_INPUT\",\"Value\":\"False\"},{\"Key\":\"USER_INPUT_TYPE\",\"Value\":\"Text\"},{\"Key\":\"COMBOBOX_DATA\",\"Value\":\"\"},{\"Key\":\"INPUT_REQUIRED\",\"Value\":\"False\"}]",
+                    "comment": "log comment panel open"
+                  },
+                  {
+                    "$type": "GPMAutomateEditor.Models.ActionNode, GPMAutomateEditor.Models",
+                    "type": 11,
+                    "element_xpath": null,
+                    "output_variable_name": "commentScrollCount",
+                    "delay": "0,0",
+                    "continue_on_error": false,
+                    "id": "abd0c9af-7261-4d2a-9f5b-e854531271b4",
+                    "display_text": "Random number",
+                    "raw_input": "[{\"Key\":\"MIN\",\"Value\":\"2\"},{\"Key\":\"MAX\",\"Value\":\"4\"}]",
+                    "comment": "pick comment up scroll count"
+                  },
+                  {
+                    "$type": "GPMAutomateEditor.Models.ForBlockNode, GPMAutomateEditor.Models",
+                    "start": "0",
+                    "end": "$commentScrollCount",
+                    "step": "1",
+                    "nodes": [
+                      {
+                        "$type": "GPMAutomateEditor.Models.ActionNode, GPMAutomateEditor.Models",
+                        "type": 11,
+                        "element_xpath": null,
+                        "output_variable_name": "commentScrollX",
+                        "delay": "0,0",
+                        "continue_on_error": false,
+                        "id": "dd7eb0ec-4a8d-43a9-8af5-34ec0ec1b393",
+                        "display_text": "Random number",
+                        "raw_input": "[{\"Key\":\"MIN\",\"Value\":\"360\"},{\"Key\":\"MAX\",\"Value\":\"1080\"}]",
+                        "comment": "pick comment scroll x"
+                      },
+                      {
+                        "$type": "GPMAutomateEditor.Models.ActionNode, GPMAutomateEditor.Models",
+                        "type": 11,
+                        "element_xpath": null,
+                        "output_variable_name": "commentHighY",
+                        "delay": "0,0",
+                        "continue_on_error": false,
+                        "id": "2323879a-6b8b-4896-b3ef-4301b1ce3b88",
+                        "display_text": "Random number",
+                        "raw_input": "[{\"Key\":\"MIN\",\"Value\":\"1150\"},{\"Key\":\"MAX\",\"Value\":\"1500\"}]",
+                        "comment": "pick comment high y"
+                      },
+                      {
+                        "$type": "GPMAutomateEditor.Models.ActionNode, GPMAutomateEditor.Models",
+                        "type": 11,
+                        "element_xpath": null,
+                        "output_variable_name": "commentLowY",
+                        "delay": "0,0",
+                        "continue_on_error": false,
+                        "id": "1b28179b-855d-4714-8f63-fc2dfc1c03a8",
+                        "display_text": "Random number",
+                        "raw_input": "[{\"Key\":\"MIN\",\"Value\":\"1850\"},{\"Key\":\"MAX\",\"Value\":\"2250\"}]",
+                        "comment": "pick comment low y"
+                      },
+                      {
+                        "$type": "GPMAutomateEditor.Models.ActionNode, GPMAutomateEditor.Models",
+                        "type": 11,
+                        "element_xpath": null,
+                        "output_variable_name": "commentScrollDuration",
+                        "delay": "0,0",
+                        "continue_on_error": false,
+                        "id": "f0cd16c7-f468-4f2f-a649-23c0329589a9",
+                        "display_text": "Random number",
+                        "raw_input": "[{\"Key\":\"MIN\",\"Value\":\"350\"},{\"Key\":\"MAX\",\"Value\":\"550\"}]",
+                        "comment": "pick comment scroll duration"
+                      },
+                      {
+                        "$type": "GPMAutomateEditor.Models.NormalBlockNode, GPMAutomateEditor.Models",
+                        "nodes": [
+                          {
+                            "$type": "GPMAutomateEditor.Models.ActionNode, GPMAutomateEditor.Models",
+                            "type": 1,
+                            "element_xpath": null,
+                            "output_variable_name": "commentStartPos",
+                            "delay": "0,0",
+                            "continue_on_error": false,
+                            "id": "ed424cd0-f79d-4efb-9230-1a1266038546",
+                            "display_text": "Set variable",
+                            "raw_input": "[{\"Key\":\"VALUE\",\"Value\":\"$commentScrollX,$commentLowY\"},{\"Key\":\"ALLOW_USER_INPUT\",\"Value\":\"False\"},{\"Key\":\"USER_INPUT_TYPE\",\"Value\":\"Text\"},{\"Key\":\"COMBOBOX_DATA\",\"Value\":\"\"},{\"Key\":\"INPUT_REQUIRED\",\"Value\":\"False\"}]",
+                            "comment": "set comment up start point"
+                          },
+                          {
+                            "$type": "GPMAutomateEditor.Models.ActionNode, GPMAutomateEditor.Models",
+                            "type": 1,
+                            "element_xpath": null,
+                            "output_variable_name": "commentEndPos",
+                            "delay": "0,0",
+                            "continue_on_error": false,
+                            "id": "a7ef86c5-b1c7-4e59-b897-6676825c61b9",
+                            "display_text": "Set variable",
+                            "raw_input": "[{\"Key\":\"VALUE\",\"Value\":\"$commentScrollX,$commentHighY\"},{\"Key\":\"ALLOW_USER_INPUT\",\"Value\":\"False\"},{\"Key\":\"USER_INPUT_TYPE\",\"Value\":\"Text\"},{\"Key\":\"COMBOBOX_DATA\",\"Value\":\"\"},{\"Key\":\"INPUT_REQUIRED\",\"Value\":\"False\"}]",
+                            "comment": "set comment up end point"
+                          },
+                          {
+                            "$type": "GPMAutomateEditor.Models.ActionNode, GPMAutomateEditor.Models",
+                            "type": 108,
+                            "element_xpath": null,
+                            "output_variable_name": null,
+                            "delay": "1500,2000",
+                            "continue_on_error": false,
+                            "id": "4a87b442-bfc4-4a80-a39e-aefe028d9b78",
+                            "display_text": "Scroll",
+                            "raw_input": "[{\"Key\":\"SCROLL_TYPE\",\"Value\":\"POINTS\"},{\"Key\":\"DIRECTION\",\"Value\":\"Up\"},{\"Key\":\"START_POS\",\"Value\":\"$commentStartPos\"},{\"Key\":\"END_POS\",\"Value\":\"$commentEndPos\"},{\"Key\":\"DURATION_MS\",\"Value\":\"$commentScrollDuration\"},{\"Key\":\"POS\",\"Value\":\"\"},{\"Key\":\"ACTION_TYPE\",\"Value\":\"Down\"}]",
+                            "comment": "scroll comments up"
+                          }
+                        ],
+                        "expanded": true,
+                        "continue_on_error": false,
+                        "id": "79af1c3c-a5f5-4182-b0b1-546c5c51a9e5",
+                        "display_text": "Normal block",
+                        "raw_input": null,
+                        "comment": "scroll comments up"
+                      }
+                    ],
+                    "expanded": true,
+                    "continue_on_error": false,
+                    "id": "6147e93b-b84c-4e2b-a0c8-96a6ed1fd5d5",
+                    "display_text": "For",
+                    "raw_input": "[{\"Key\":\"START\",\"Value\":\"0\"},{\"Key\":\"END\",\"Value\":\"$commentScrollCount\"},{\"Key\":\"STEP\",\"Value\":\"1\"}]",
+                    "comment": "randomly scroll comment list"
+                  },
+                  {
+                    "$type": "GPMAutomateEditor.Models.ActionNode, GPMAutomateEditor.Models",
+                    "type": 7,
+                    "element_xpath": null,
+                    "output_variable_name": null,
+                    "delay": "0,0",
+                    "continue_on_error": false,
+                    "id": "1721d873-9f09-4ba5-a676-1efee3759249",
+                    "display_text": "Delay",
+                    "raw_input": "[{\"Key\":\"MIN\",\"Value\":\"2000\"},{\"Key\":\"MAX\",\"Value\":\"2000\"}]",
+                    "comment": "wait before closing comments..."
+                  },
+                  {
+                    "$type": "GPMAutomateEditor.Models.ActionNode, GPMAutomateEditor.Models",
+                    "type": 33,
+                    "element_xpath": null,
+                    "output_variable_name": "commentClosePos",
+                    "delay": "0,0",
+                    "continue_on_error": false,
+                    "id": "bb50e73d-738a-4c87-bde7-1e7bfa681a03",
+                    "display_text": "Image search",
+                    "raw_input": "[{\"Key\":\"IMG\",\"Value\":\"tiktok_closecomment.img64\"},{\"Key\":\"THRESH_HOLD\",\"Value\":\"0.8\"},{\"Key\":\"TRUE_COLOR\",\"Value\":\"No\"}]",
+                    "comment": "find TikTok comment Close position"
+                  },
+                  {
+                    "$type": "GPMAutomateEditor.Models.IfBlockNode, GPMAutomateEditor.Models",
+                    "condition": "$commentClosePos != \"\"",
+                    "nodes": [
+                      {
+                        "$type": "GPMAutomateEditor.Models.ActionNode, GPMAutomateEditor.Models",
+                        "type": 107,
+                        "element_xpath": null,
+                        "output_variable_name": null,
+                        "delay": "0,0",
+                        "continue_on_error": false,
+                        "id": "1f2e35d4-4db6-4b7e-9f71-79d4a9c29907",
+                        "display_text": "Touch",
+                        "raw_input": "[{\"Key\":\"TOUCH_TYPE\",\"Value\":\"TOUCH_POS\"},{\"Key\":\"XPATH\",\"Value\":\"\"},{\"Key\":\"POS\",\"Value\":\"$commentClosePos\"},{\"Key\":\"MODE\",\"Value\":\"Normal\"}]",
+                        "comment": "touch found Close position"
+                      },
+                      {
+                        "$type": "GPMAutomateEditor.Models.ActionNode, GPMAutomateEditor.Models",
+                        "type": 7,
+                        "element_xpath": null,
+                        "output_variable_name": null,
+                        "delay": "0,0",
+                        "continue_on_error": false,
+                        "id": "e5a76ef3-fb34-479a-9b97-07dc46646f1f",
+                        "display_text": "Delay",
+                        "raw_input": "[{\"Key\":\"MIN\",\"Value\":\"3000\"},{\"Key\":\"MAX\",\"Value\":\"3000\"}]",
+                        "comment": "wait comment panel close..."
+                      },
+                      {
+                        "$type": "GPMAutomateEditor.Models.ActionNode, GPMAutomateEditor.Models",
+                        "type": 32,
+                        "element_xpath": null,
+                        "output_variable_name": "commentPanelAfterClose",
+                        "delay": "0,0",
+                        "continue_on_error": false,
+                        "id": "d0388a38-a714-4d99-8e4a-0fb8ba80b0d4",
+                        "display_text": "Image exists",
+                        "raw_input": "[{\"Key\":\"IMG\",\"Value\":\"tiktok_verifypanelcomment.img64\"},{\"Key\":\"THRESH_HOLD\",\"Value\":\"0.8\"},{\"Key\":\"TRUE_COLOR\",\"Value\":\"No\"}]",
+                        "comment": "verify comment panel after close"
+                      },
+                      {
+                        "$type": "GPMAutomateEditor.Models.IfBlockNode, GPMAutomateEditor.Models",
+                        "condition": "$commentPanelAfterClose = \"false\"",
+                        "nodes": [
+                          {
+                            "$type": "GPMAutomateEditor.Models.ActionNode, GPMAutomateEditor.Models",
+                            "type": 1,
+                            "element_xpath": null,
+                            "output_variable_name": "flow2Result",
+                            "delay": "0,0",
+                            "continue_on_error": false,
+                            "id": "48dc27b1-15d2-488e-8f23-f3579b7cd35d",
+                            "display_text": "Set variable",
+                            "raw_input": "[{\"Key\":\"VALUE\",\"Value\":\"COMMENT_PANEL_CLOSED\"},{\"Key\":\"ALLOW_USER_INPUT\",\"Value\":\"False\"},{\"Key\":\"USER_INPUT_TYPE\",\"Value\":\"Text\"},{\"Key\":\"COMBOBOX_DATA\",\"Value\":\"\"},{\"Key\":\"INPUT_REQUIRED\",\"Value\":\"False\"}]",
+                            "comment": "log comment panel closed"
+                          }
+                        ],
+                        "expanded": true,
+                        "continue_on_error": false,
+                        "id": "c89f55f4-8f7a-42f8-873d-4d84306074c7",
+                        "display_text": "If",
+                        "raw_input": "[{\"Key\":\"CONDITION\",\"Value\":\"$commentPanelAfterClose = \\\"false\\\"\"}]",
+                        "comment": "comment panel no longer visible"
+                      },
+                      {
+                        "$type": "GPMAutomateEditor.Models.ElseBlockNode, GPMAutomateEditor.Models",
+                        "nodes": [
+                          {
+                            "$type": "GPMAutomateEditor.Models.ActionNode, GPMAutomateEditor.Models",
+                            "type": 33,
+                            "element_xpath": null,
+                            "output_variable_name": "commentCloseRetryPos",
+                            "delay": "0,0",
+                            "continue_on_error": false,
+                            "id": "c2010001-9000-4000-8000-000000000001",
+                            "display_text": "Image search",
+                            "raw_input": "[{\"Key\":\"IMG\",\"Value\":\"tiktok_closecomment.img64\"},{\"Key\":\"THRESH_HOLD\",\"Value\":\"0.8\"},{\"Key\":\"TRUE_COLOR\",\"Value\":\"No\"}]",
+                            "comment": "find TikTok comment Close position for retry"
+                          },
+                          {
+                            "$type": "GPMAutomateEditor.Models.IfBlockNode, GPMAutomateEditor.Models",
+                            "condition": "$commentCloseRetryPos != \"\"",
+                            "nodes": [
+                              {
+                                "$type": "GPMAutomateEditor.Models.ActionNode, GPMAutomateEditor.Models",
+                                "type": 107,
+                                "element_xpath": null,
+                                "output_variable_name": null,
+                                "delay": "0,0",
+                                "continue_on_error": false,
+                                "id": "c2010002-9000-4000-8000-000000000002",
+                                "display_text": "Phone touch",
+                                "raw_input": "[{\"Key\":\"TOUCH_TYPE\",\"Value\":\"TOUCH_POS\"},{\"Key\":\"XPATH\",\"Value\":\"\"},{\"Key\":\"POS\",\"Value\":\"$commentCloseRetryPos\"},{\"Key\":\"MODE\",\"Value\":\"Normal\"}]",
+                                "comment": "touch Close retry"
+                              },
+                              {
+                                "$type": "GPMAutomateEditor.Models.ActionNode, GPMAutomateEditor.Models",
+                                "type": 7,
+                                "element_xpath": null,
+                                "output_variable_name": null,
+                                "delay": "0,0",
+                                "continue_on_error": false,
+                                "id": "c2010003-9000-4000-8000-000000000003",
+                                "display_text": "Delay",
+                                "raw_input": "[{\"Key\":\"MIN\",\"Value\":\"3000\"},{\"Key\":\"MAX\",\"Value\":\"3000\"}]",
+                                "comment": "wait after retry close"
+                              },
+                              {
+                                "$type": "GPMAutomateEditor.Models.ActionNode, GPMAutomateEditor.Models",
+                                "type": 32,
+                                "element_xpath": null,
+                                "output_variable_name": "commentPanelAfterCloseRetry",
+                                "delay": "0,0",
+                                "continue_on_error": false,
+                                "id": "c2010004-9000-4000-8000-000000000004",
+                                "display_text": "Image exists",
+                                "raw_input": "[{\"Key\":\"IMG\",\"Value\":\"tiktok_verifypanelcomment.img64\"},{\"Key\":\"THRESH_HOLD\",\"Value\":\"0.8\"},{\"Key\":\"TRUE_COLOR\",\"Value\":\"No\"}]",
+                                "comment": "verify comment panel after retry close"
+                              },
+                              {
+                                "$type": "GPMAutomateEditor.Models.IfBlockNode, GPMAutomateEditor.Models",
+                                "condition": "$commentPanelAfterCloseRetry = \"false\"",
+                                "nodes": [
+                                  {
+                                    "$type": "GPMAutomateEditor.Models.ActionNode, GPMAutomateEditor.Models",
+                                    "type": 1,
+                                    "element_xpath": null,
+                                    "output_variable_name": "flow2Result",
+                                    "delay": "0,0",
+                                    "continue_on_error": false,
+                                    "id": "c2010005-9000-4000-8000-000000000005",
+                                    "display_text": "Set variable",
+                                    "raw_input": "[{\"Key\":\"VALUE\",\"Value\":\"COMMENT_PANEL_CLOSED_AFTER_RETRY\"},{\"Key\":\"ALLOW_USER_INPUT\",\"Value\":\"False\"},{\"Key\":\"USER_INPUT_TYPE\",\"Value\":\"Text\"},{\"Key\":\"COMBOBOX_DATA\",\"Value\":\"\"},{\"Key\":\"INPUT_REQUIRED\",\"Value\":\"False\"}]",
+                                    "comment": "log comment panel closed after retry"
+                                  }
+                                ],
+                                "expanded": true,
+                                "continue_on_error": false,
+                                "id": "c2010006-9000-4000-8000-000000000006",
+                                "display_text": "If",
+                                "raw_input": "[{\"Key\":\"CONDITION\",\"Value\":\"$commentPanelAfterCloseRetry = \\\"false\\\"\"}]",
+                                "comment": "comment panel no longer visible after retry"
+                              },
+                              {
+                                "$type": "GPMAutomateEditor.Models.ElseBlockNode, GPMAutomateEditor.Models",
+                                "nodes": [
+                                  {
+                                    "$type": "GPMAutomateEditor.Models.ActionNode, GPMAutomateEditor.Models",
+                                    "type": 1,
+                                    "element_xpath": null,
+                                    "output_variable_name": "flow2Result",
+                                    "delay": "0,0",
+                                    "continue_on_error": false,
+                                    "id": "c2010007-9000-4000-8000-000000000007",
+                                    "display_text": "Set variable",
+                                    "raw_input": "[{\"Key\":\"VALUE\",\"Value\":\"COMMENT_PANEL_STILL_OPEN_AFTER_RETRY\"},{\"Key\":\"ALLOW_USER_INPUT\",\"Value\":\"False\"},{\"Key\":\"USER_INPUT_TYPE\",\"Value\":\"Text\"},{\"Key\":\"COMBOBOX_DATA\",\"Value\":\"\"},{\"Key\":\"INPUT_REQUIRED\",\"Value\":\"False\"}]",
+                                    "comment": "log comment panel still open after retry"
+                                  }
+                                ],
+                                "expanded": true,
+                                "continue_on_error": false,
+                                "id": "c2010008-9000-4000-8000-000000000008",
+                                "display_text": "Else",
+                                "raw_input": null,
+                                "comment": "comment panel still visible after retry"
+                              }
+                            ],
+                            "expanded": true,
+                            "continue_on_error": false,
+                            "id": "c2010009-9000-4000-8000-000000000009",
+                            "display_text": "If",
+                            "raw_input": "[{\"Key\":\"CONDITION\",\"Value\":\"$commentCloseRetryPos != \\\"\\\"\"}]",
+                            "comment": "retry Close icon found"
+                          },
+                          {
+                            "$type": "GPMAutomateEditor.Models.ElseBlockNode, GPMAutomateEditor.Models",
+                            "nodes": [
+                              {
+                                "$type": "GPMAutomateEditor.Models.ActionNode, GPMAutomateEditor.Models",
+                                "type": 1,
+                                "element_xpath": null,
+                                "output_variable_name": "flow2Result",
+                                "delay": "0,0",
+                                "continue_on_error": false,
+                                "id": "c2010010-9000-4000-8000-000000000010",
+                                "display_text": "Set variable",
+                                "raw_input": "[{\"Key\":\"VALUE\",\"Value\":\"COMMENT_CLOSE_RETRY_ICON_NOT_FOUND\"},{\"Key\":\"ALLOW_USER_INPUT\",\"Value\":\"False\"},{\"Key\":\"USER_INPUT_TYPE\",\"Value\":\"Text\"},{\"Key\":\"COMBOBOX_DATA\",\"Value\":\"\"},{\"Key\":\"INPUT_REQUIRED\",\"Value\":\"False\"}]",
+                                "comment": "log retry Close icon not found"
+                              }
+                            ],
+                            "expanded": true,
+                            "continue_on_error": false,
+                            "id": "c2010011-9000-4000-8000-000000000011",
+                            "display_text": "Else",
+                            "raw_input": null,
+                            "comment": "retry Close icon not found"
+                          }
+                        ],
+                        "expanded": true,
+                        "continue_on_error": false,
+                        "id": "a2f8b50e-d67a-4f93-9b3f-fc7344122c85",
+                        "display_text": "Else",
+                        "raw_input": null,
+                        "comment": "retry Close only while comment panel remains visible"
+                      }
+                    ],
+                    "expanded": true,
+                    "continue_on_error": false,
+                    "id": "c5dafed5-f7ed-492c-8873-e5c17f404a62",
+                    "display_text": "If",
+                    "raw_input": "[{\"Key\":\"CONDITION\",\"Value\":\"$commentClosePos != \\\"\\\"\"}]",
+                    "comment": "comment Close icon found"
+                  },
+                  {
+                    "$type": "GPMAutomateEditor.Models.ElseBlockNode, GPMAutomateEditor.Models",
+                    "nodes": [
+                      {
+                        "$type": "GPMAutomateEditor.Models.ActionNode, GPMAutomateEditor.Models",
+                        "type": 1,
+                        "element_xpath": null,
+                        "output_variable_name": "flow2Result",
+                        "delay": "0,0",
+                        "continue_on_error": false,
+                        "id": "e4a12f67-7e33-46b9-b2df-0dc9514df724",
+                        "display_text": "Set variable",
+                        "raw_input": "[{\"Key\":\"VALUE\",\"Value\":\"COMMENT_CLOSE_ICON_NOT_FOUND\"},{\"Key\":\"ALLOW_USER_INPUT\",\"Value\":\"False\"},{\"Key\":\"USER_INPUT_TYPE\",\"Value\":\"Text\"},{\"Key\":\"COMBOBOX_DATA\",\"Value\":\"\"},{\"Key\":\"INPUT_REQUIRED\",\"Value\":\"False\"}]",
+                        "comment": "log Comment Close icon not found"
+                      }
+                    ],
+                    "expanded": true,
+                    "continue_on_error": false,
+                    "id": "9586c098-0c64-4c1b-b806-cfa7cdb759e1",
+                    "display_text": "Else",
+                    "raw_input": null,
+                    "comment": "comment Close icon not found"
+                  }
+                ],
+                "expanded": true,
+                "continue_on_error": false,
+                "id": "2c52b641-2b2d-44a8-a9c9-047643b5438b",
+                "display_text": "If",
+                "raw_input": "[{\"Key\":\"CONDITION\",\"Value\":\"$commentPanelExists = \\\"true\\\"\"}]",
+                "comment": "comment panel verified"
+              },
+              {
+                "$type": "GPMAutomateEditor.Models.ElseBlockNode, GPMAutomateEditor.Models",
+                "nodes": [
+                  {
+                    "$type": "GPMAutomateEditor.Models.ActionNode, GPMAutomateEditor.Models",
+                    "type": 1,
+                    "element_xpath": null,
+                    "output_variable_name": "flow2Result",
+                    "delay": "0,0",
+                    "continue_on_error": false,
+                    "id": "6c31437c-3a5c-4bb2-92bd-67eaa956a255",
+                    "display_text": "Set variable",
+                    "raw_input": "[{\"Key\":\"VALUE\",\"Value\":\"COMMENT_PANEL_NOT_VERIFIED\"},{\"Key\":\"ALLOW_USER_INPUT\",\"Value\":\"False\"},{\"Key\":\"USER_INPUT_TYPE\",\"Value\":\"Text\"},{\"Key\":\"COMBOBOX_DATA\",\"Value\":\"\"},{\"Key\":\"INPUT_REQUIRED\",\"Value\":\"False\"}]",
+                    "comment": "log comment panel not verified"
+                  }
+                ],
+                "expanded": true,
+                "continue_on_error": false,
+                "id": "47c54f62-7b65-4c1c-b6b5-18b43d23f2b7",
+                "display_text": "Else",
+                "raw_input": null,
+                "comment": "comment panel not verified"
+              }
+            ],
+            "expanded": true,
+            "continue_on_error": false,
+            "id": "1285b58e-3f62-4bbb-ae40-65fbdc950822",
+            "display_text": "If",
+            "raw_input": "[{\"Key\":\"CONDITION\",\"Value\":\"$commentPos != \\\"\\\"\"}]",
+            "comment": "tested Comment target set"
+          },
+          {
+            "$type": "GPMAutomateEditor.Models.ElseBlockNode, GPMAutomateEditor.Models",
+            "nodes": [
+              {
+                "$type": "GPMAutomateEditor.Models.ActionNode, GPMAutomateEditor.Models",
+                "type": 1,
+                "element_xpath": null,
+                "output_variable_name": "flow2Result",
+                "delay": "0,0",
+                "continue_on_error": false,
+                "id": "a49c680c-d0d9-44df-9d25-6fa8b3b1d574",
+                "display_text": "Set variable",
+                "raw_input": "[{\"Key\":\"VALUE\",\"Value\":\"COMMENT_ICON_NOT_FOUND\"},{\"Key\":\"ALLOW_USER_INPUT\",\"Value\":\"False\"},{\"Key\":\"USER_INPUT_TYPE\",\"Value\":\"Text\"},{\"Key\":\"COMBOBOX_DATA\",\"Value\":\"\"},{\"Key\":\"INPUT_REQUIRED\",\"Value\":\"False\"}]",
+                "comment": "log Comment icon not found"
+              }
+            ],
+            "expanded": true,
+            "continue_on_error": false,
+            "id": "caee9b00-cd3c-4d5e-8253-4edcfe01e6ca",
+            "display_text": "Else",
+            "raw_input": null,
+            "comment": "Comment target unavailable"
+          }
+        ],
+        "expanded": true,
+        "continue_on_error": false,
+        "id": "f2010001-9000-4000-8000-000000000028",
+        "display_text": "If",
+        "raw_input": "[{\"Key\":\"CONDITION\",\"Value\":\"$commentRoll = 1 || $commentRoll = 2\"}]",
+        "comment": "comment selected"
+      },
+      {
+        "$type": "GPMAutomateEditor.Models.ElseBlockNode, GPMAutomateEditor.Models",
+        "nodes": [
+          {
+            "$type": "GPMAutomateEditor.Models.ActionNode, GPMAutomateEditor.Models",
+            "type": 1,
+            "element_xpath": null,
+            "output_variable_name": "flow2Result",
+            "delay": "0,0",
+            "continue_on_error": false,
+            "id": "f2010001-9000-4000-8000-000000000029",
+            "display_text": "Set variable",
+            "raw_input": "[{\"Key\":\"VALUE\",\"Value\":\"RANDOM_NUMBER_$commentRoll_NO_READ_COMMENT\"},{\"Key\":\"ALLOW_USER_INPUT\",\"Value\":\"False\"},{\"Key\":\"USER_INPUT_TYPE\",\"Value\":\"Text\"},{\"Key\":\"COMBOBOX_DATA\",\"Value\":\"\"},{\"Key\":\"INPUT_REQUIRED\",\"Value\":\"False\"}]",
+            "comment": "log random no read comment"
+          }
+        ],
+        "expanded": true,
+        "continue_on_error": false,
+        "id": "f2010001-9000-4000-8000-000000000030",
+        "display_text": "Else",
+        "raw_input": null,
+        "comment": "comment not selected"
+      }
+    ],
+    "expanded": true,
+    "continue_on_error": false,
+    "id": "507cac61-2468-439c-ab55-5255dbce567d",
+    "display_text": null,
+    "raw_input": null,
+    "comment": "FLOW 2: wait For You; read screen size with 1440x2960 fallback; watch and scroll three videos using relative points; roll 1-9; only rolls 1 or 2 read comments. The comment action uses 1337,1897 with +/-15 px jitter, verifies the panel image, makes 2-4 small upward panel scrolls, closes by image, then verifies the panel is gone."
+  },
+  "name": "Main"
+}

@@ -12,8 +12,8 @@
         "continue_on_error": false,
         "id": "f9513379-47ec-42b6-8eb7-475a0fe50ee3",
         "display_text": "Call workflow",
-        "raw_input": "[{\"Key\":\"REF_FILE\",\"Value\":\"flow_1\"}]",
-        "comment": "run TikTok Lite watch scroll and Like"
+        "raw_input": "[{\"Key\":\"REF_FILE\",\"Value\":\"flow_2\"}]",
+        "comment": "run TikTok Lite watch scroll and read comments"
       }
     ],
     "expanded": true,
@@ -21,7 +21,7 @@
     "id": "d6d59787-76e4-44a2-977b-a9107aa29780",
     "display_text": null,
     "raw_input": null,
-    "comment": "Main workflow: run flow_1 TikTok Lite watch scroll and Like"
+    "comment": "Main workflow: run flow_2 TikTok Lite watch scroll and read comments"
   },
   "name": "Main"
 }
