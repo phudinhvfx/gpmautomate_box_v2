@@ -1,17 +1,18 @@
 # Box_v2 — TikTok Lite Phone workflow
 
-`Box_v2` là project GPM Automate loại **Phone** cho thao tác xem feed TikTok Lite. Tài liệu này phản ánh source hiện tại và kết quả vận hành đã được người dùng xác nhận trên Device 05 ngày 15-10-2026.
+`Box_v2` là project GPM Automate loại **Phone** cho thao tác TikTok Lite. Tài liệu này phản ánh source hiện tại và bốn flow đã được người vận hành kiểm thử độc lập ngày 16-10-2026.
 
 ## Phạm vi hiện tại
 
 | Thành phần | Vai trò | Trạng thái |
 | --- | --- | --- |
-| `flow_0_v2.gscript` | Mở TikTok Lite qua hai biến thể package/Activity và chờ ngắn | Có sẵn, chạy độc lập |
-| `flow_1.gscript` | Chờ feed, xem video, vuốt 5 lượt, chọn ngẫu nhiên Like | Đã chạy thật thành công |
-| `flow_2.gscript` | Chờ feed, xem/đổi 3 video, rồi đọc và đóng Comment panel | Đã được người vận hành kiểm thử thực tế |
+| `flow_0_v2.gscript` | Mở TikTok Lite qua hai biến thể package/Activity, rồi xác minh **For You** | Đã kiểm thử độc lập |
+| `flow_1.gscript` | Chờ feed, xem video, vuốt 5 lượt, chọn ngẫu nhiên Like | Đã kiểm thử độc lập |
+| `flow_2.gscript` | Chờ feed, mở Comment, nhập/gửi text, xác minh gửi rồi đóng panel | Đã kiểm thử độc lập |
+| `flow_3.gscript` | Chờ feed, mở Comment, đọc/scroll lên rồi đóng panel | Đã kiểm thử độc lập |
 | `src.gscript` | Main workflow | Hiện gọi `flow_2` |
 
-`flow_1` và `flow_2` đều **giả định TikTok Lite đã ở feed**. Khi cần mở app trước, chạy `flow_0_v2` riêng, hoặc chủ động nối lời gọi flow này vào Main trong một thay đổi có kiểm thử riêng.
+`flow_1`, `flow_2` và `flow_3` đều **giả định TikTok Lite đã ở feed**. Khi cần mở app trước, chạy `flow_0_v2` riêng, hoặc chủ động nối lời gọi flow này vào Main trong một thay đổi có kiểm thử riêng.
 
 ## Hành vi của `flow_1`
 
@@ -31,33 +32,29 @@ Kết quả nhánh được ghi trong `$likeResult`:
 
 Đây là log của **ý định/thao tác đã gửi**, không phải chứng minh trạng thái Like phía TikTok.
 
-## Hành vi của `flow_2`
+## Hành vi của `flow_2`: gửi comment
 
-1. Chờ XPath **For You**, đọc `adb shell wm size`, rồi dùng fallback `1440 × 2960` nếu không đọc được kích thước thật.
-2. Xem video hiện tại 3–8 giây, sau đó vuốt lên 3 video mới bằng tọa độ tỷ lệ màn hình; mỗi video mới cũng chờ 3–8 giây.
-3. Sinh `$commentRoll`. Source hiện đặt khoảng **1–2**, vì vậy nhánh đọc comment hiện luôn được chọn. Nhánh log `RANDOM_NUMBER_<n>_NO_READ_COMMENT` chỉ có ý nghĩa khi khoảng random được thay đổi trong một thay đổi riêng.
-4. Chạm nút Comment tại điểm đã kiểm thử `1337,1897`, với jitter độc lập `±15 px`; chờ 6–10 giây và xác minh panel bằng `tiktok_verifypanelcomment.img64`.
-5. Khi panel đã xác minh, chỉ vuốt **lên** trong vùng comment 2–4 lượt, rồi chờ 2 giây trước khi đóng. Không có vuốt xuống: vuốt đúng hướng/tọa độ là điều kiện giữ thao tác nằm trong panel thay vì đổi video.
-6. Tìm `tiktok_closecomment.img64`, chạm Close, chờ 3 giây và tìm lại ảnh panel. Nếu panel vẫn còn (ví dụ lần chạm đầu chỉ đóng bàn phím ảo của bài không có comment), flow tìm Close và chạm thêm **một lần**, rồi xác minh lại sau 3 giây.
+1. Chờ **For You**, đọc `adb shell wm size` (fallback `1440 × 2960`), xem video hiện tại rồi vuốt lên 3 video mới theo tọa độ tỷ lệ màn hình.
+2. `$commentRoll` hiện là **1–2**, nên luôn vào nhánh Comment. Flow chạm `1337,1897` với jitter `±15 px`, chờ 8–12 giây và xác minh panel bằng `tiktok_verifypanelcomment.img64`.
+3. Tìm `tiktok_addcomment.img64`, chạm ô nhập, chờ 6–8 giây, đọc một dòng ngẫu nhiên từ `D:\docs\comments_warmup.telex.txt` và nhập Telex.
+4. Tìm `tiktok_sendcomment.img64`, chạm Send, chờ 5–8 giây rồi xác minh `tiktok_verifysentcomment.img64`.
+5. Khi Send đã tìm được, chờ thêm 3 giây, tìm/chạm `tiktok_closecomment.img64`, chờ 3 giây và xác minh panel không còn hiện.
 
-`flow_2` chỉ báo trạng thái thao tác đã gửi hoặc trạng thái Image Search. Kết quả cần được đối chiếu với quan sát UI khi canary một layout/app version mới.
+`$flow2Result` giữ kết quả gửi: `COMMENT_SEND_VERIFIED`, `COMMENT_SEND_TAPPED_NOT_VERIFIED`, hoặc `COMMENT_SEND_BUTTON_NOT_FOUND`. Biến `$commentPanelCloseResult` ghi riêng kết quả đóng: `COMMENT_PANEL_CLOSED`, `COMMENT_PANEL_STILL_OPEN`, hoặc `COMMENT_CLOSE_ICON_NOT_FOUND`.
 
-Các giá trị `$flow2Result` quan trọng:
+## Hành vi của `flow_3`: đọc comment
 
-| Giá trị | Ý nghĩa |
-| --- | --- |
-| `COMMENT_TAP_TARGET_<x,y>` | Đã tạo tọa độ chạm Comment có jitter |
-| `COMMENT_PANEL_OPEN` | Asset panel đã được tìm thấy sau khi mở |
-| `COMMENT_PANEL_CLOSED` | Panel không còn thấy sau lần Close đầu |
-| `COMMENT_PANEL_CLOSED_AFTER_RETRY` | Panel không còn thấy sau lần Close thứ hai |
-| `COMMENT_PANEL_STILL_OPEN_AFTER_RETRY` | Panel vẫn thấy sau hai lần Close |
-| `COMMENT_CLOSE_ICON_NOT_FOUND` / `COMMENT_CLOSE_RETRY_ICON_NOT_FOUND` | Không tìm được Close ở lần tương ứng |
-| `COMMENT_PANEL_NOT_VERIFIED` | Không xác minh được panel sau khi chạm Comment |
+1. Dùng cùng gate **For You**, kích thước màn hình, ba lượt vuốt video và chạm Comment có jitter như `flow_2`; thời gian chờ panel là 6–10 giây.
+2. Sau khi xác minh panel, flow chỉ vuốt **lên** trong vùng comment 2–4 lượt. Không có vuốt xuống để tránh chuyển video hoặc kích hoạt ô nhập.
+3. Flow chờ 2 giây, tìm/chạm Close, rồi xác minh panel. Nếu panel vẫn còn (ví dụ Close đầu chỉ đóng bàn phím ảo), flow tìm/chạm Close thêm lần nữa và xác minh lại.
+
+`flow_3` kế thừa các mã `COMMENT_PANEL_*` lịch sử trong `$flow2Result`; tên biến này không làm thay đổi hành vi của Flow 3.
 
 ## Các giới hạn đã chốt
 
 - Không xác minh `Liked` sau khi chạm. XPath trạng thái Liked không ổn định; Image Search cũng có thể khớp sai do biểu tượng nằm trên nền video động.
 - `tiktok_like.img64`, `tiktok_liked.img64`, và `tiktok_comment.img64` được giữ làm asset probe lịch sử. `flow_1` hiện không phụ thuộc các ảnh này để quyết định Like.
+- `flow_2` dùng asset hình ảnh cho ô nhập, Send, trạng thái đã gửi, panel và Close; `flow_3` dùng asset panel và Close. Các asset này cần canary lại nếu layout TikTok Lite đổi.
 - Tọa độ Like đã xác nhận cho bố cục Device 05 / `1440 × 2960`. Cơ chế vuốt đã tỷ lệ theo kích thước màn hình; điểm Like chưa tỷ lệ theo màn hình và cần canary riêng trước khi dùng cho bố cục khác.
 - Nếu video hiện tại đã Like, một lần chạm có thể đảo trạng thái. Flow không có cách xác nhận trạng thái trước/sau chạm đáng tin cậy.
 
@@ -65,8 +62,8 @@ Các giá trị `$flow2Result` quan trọng:
 
 1. Mở TikTok Lite đến feed **For You**, hoặc chạy `flow_0_v2` trước.
 2. Sau khi sửa trực tiếp file `.gscript`, đóng/mở lại GPM Editor để nạp source mới.
-3. Chạy Main (`src.gscript`) hoặc gọi riêng flow cần kiểm thử: `flow_1` cho Like, `flow_2` cho đọc comment.
-4. Với Main/`flow_2`, kiểm tra XPath `For You`, `$screenSizeRaw` (nếu có), các biến tọa độ vuốt, `$commentRoll`, `$commentPos`, rồi `$flow2Result`.
+3. Chạy Main (`src.gscript`) hoặc gọi riêng flow cần kiểm thử: `flow_1` cho Like, `flow_2` cho gửi comment, `flow_3` cho đọc comment.
+4. Với Main/`flow_2`, kiểm tra XPath `For You`, `$screenSizeRaw` (nếu có), các biến tọa độ, `$commentRoll`, `$commentPos`, `$flow2Result` và `$commentPanelCloseResult`. Với `flow_3`, kiểm tra `$flow2Result` sau thao tác đọc/đóng.
 5. Với `flow_1`, kiểm tra các biến tọa độ vuốt, `$actionRoll`, rồi `$likeResult`.
 
 Một action có dấu `✓` chỉ cho biết GPM Runtime đã thực thi node; `$likeResult` chỉ cho biết nhánh đã chọn. Không coi các log này là bằng chứng TikTok đã giữ trạng thái Like.

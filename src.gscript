@@ -21,7 +21,7 @@
     "id": "d6d59787-76e4-44a2-977b-a9107aa29780",
     "display_text": null,
     "raw_input": null,
-    "comment": "Main workflow: run flow_2 TikTok Lite watch scroll and read comments"
+    "comment": "Main workflow"
   },
   "name": "Main"
 }

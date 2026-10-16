@@ -10,27 +10,28 @@
 | Thiết bị đã canary | Device 05, bố cục `1440 × 2960` |
 | Main hiện tại | Gọi `flow_2` |
 | `flow_1` | 5 lượt vuốt và cơ hội Like 2/9 |
-| `flow_2` | 3 lượt vuốt video, sau đó đọc Comment panel |
+| `flow_2` | 3 lượt vuốt video, sau đó gửi Comment và đóng panel |
+| `flow_3` | 3 lượt vuốt video, sau đó đọc/scroll Comment panel |
 
 Không chạy GPM Phone đồng thời với một workflow BoxPhone V3 khác trên cùng device. Việc chọn device/user/proxy nằm ngoài phạm vi của project này.
 
 ```mermaid
 flowchart TD
   A[flow_0_v2 chạy độc lập] --> B[TikTok Lite foreground]
-  C[Main src.gscript] --> D[flow_2]
+  C[Main src.gscript] --> D[flow_2 gửi comment]
   B --> D
+  B --> Q[flow_3 đọc comment]
   D --> E[Chờ XPath For You]
   E --> F[Đọc wm size / fallback]
   F --> G[Xem 3-8 giây]
   G --> H[Vuốt lên 3 lượt, mỗi lượt xem 3-8 giây]
   H --> I[Chạm Comment tại điểm jitter]
   I --> J[Xác minh Comment panel]
-  J --> K[Vuốt lên trong panel 2-4 lượt]
-  K --> L[Tìm và chạm Close]
-  L --> M{Panel còn thấy?}
-  M -->|Không| N[Ghi COMMENT_PANEL_CLOSED]
-  M -->|Có| O[Tìm/chạm Close lần hai]
-  O --> P[Xác minh lại]
+  J --> K[Flow 2: tìm ô nhập, gõ và chạm Send]
+  K --> L[Xác minh comment đã gửi]
+  L --> M[Tìm/chạm Close rồi xác minh panel đóng]
+  Q --> R[Vuốt lên trong panel 2-4 lượt]
+  R --> S[Tìm/chạm Close, retry nếu panel còn]
 ```
 
 ## `flow_0_v2`: mở TikTok Lite
@@ -40,7 +41,7 @@ Flow này không được Main gọi mặc định. Nó thử các launcher theo
 1. Legacy: `com.zhiliaoapp.musically.go/.mini.MainActivity`.
 2. Đọc `dumpsys activity activities`, xác nhận `topResumedActivity` có package legacy.
 3. Nếu chưa foreground, thử modern: `com.tiktok.lite.go/com.zhiliaoapp.musically.go.mini.MainActivity`.
-4. Xác nhận foreground package modern và chờ 1,5–2,5 giây.
+4. Xác nhận foreground package modern, chờ 1,5–2,5 giây, rồi chờ XPath **For You** tối đa 15 giây.
 
 Không thêm `--user` vào lệnh launcher/package. Runtime từng trả `Bad user number` khi nhận Android user `10`; launcher không có `--user` đã mở thành công TikTok Lite trên Device 05. Việc thành công từ `am start` phải được đối chiếu bằng bước foreground, không chỉ dựa vào dấu `✓` của action.
 
@@ -94,42 +95,47 @@ Sau lượt vuốt cuối:
 
 Không đặt Delay 5 giây hay Image Search để xác minh Liked sau chạm: ảnh trái tim đỏ không cho kết quả đủ ổn định trên nền video thay đổi. Điều này cố ý; không diễn giải `LIKE_TAP_SENT` là Like đã được TikTok ghi nhận.
 
-## `flow_2`: xem video, đọc comment và đóng panel
+## `flow_2`: xem video, gửi comment và đóng panel
 
 ### 1. Feed, kích thước và 3 video mới
 
 `flow_2` dùng cùng gate **For You**, `shell wm size` và fallback `1440 × 2960` như `flow_1`. Sau khi xem video hiện tại 3–8 giây, flow dùng `PhoneScroll` `SCROLL_TYPE=POINTS`, `DIRECTION=Up` để qua 3 video mới. Mỗi lượt dùng vùng tỷ lệ 40–60% chiều rộng, 80–85% chiều cao xuống 40–45% chiều cao, trong 450–700 ms, rồi chờ 3–8 giây.
 
-### 2. Mở và xác minh Comment panel
+### 2. Mở panel, nhập và gửi
 
-- `$commentRoll` hiện được sinh trong khoảng `1–2`; điều kiện `1` hoặc `2` do đó luôn đi vào nhánh comment. Không tự đổi thành `1–9` nếu chưa có yêu cầu thay đổi hành vi.
-- Điểm Comment cơ sở là `1337,1897`; `$commentJitterX/Y` là `-15…15` nên mỗi lần chạm nằm trong vùng ±15 px.
-- Sau chạm, flow chờ 6–10 giây, rồi `Image exists` asset `tiktok_verifypanelcomment.img64` với ngưỡng `0.8`.
-- Không xác minh được asset thì ghi `COMMENT_PANEL_NOT_VERIFIED` và không vuốt/đóng mù.
+- `$commentRoll` hiện là `1–2`, do đó luôn vào nhánh Comment.
+- Flow chạm điểm cơ sở `1337,1897` với jitter `±15 px`, chờ **8–12 giây**, rồi xác minh `tiktok_verifypanelcomment.img64` ở ngưỡng `0.8`.
+- Sau khi panel được xác minh, flow tìm `tiktok_addcomment.img64`, chạm vị trí tìm được, chờ 6–8 giây, lấy một dòng ngẫu nhiên từ `D:\docs\comments_warmup.telex.txt` và nhập bằng `PhoneTypeText`.
+- Flow chờ 3 giây, tìm `tiktok_sendcomment.img64`, rồi chạm Send. Nếu không tìm được, ghi `COMMENT_SEND_BUTTON_NOT_FOUND`.
+- Sau chạm Send, flow chờ 5–8 giây, xác minh `tiktok_verifysentcomment.img64`. Kết quả gửi là `COMMENT_SEND_VERIFIED` hoặc `COMMENT_SEND_TAPPED_NOT_VERIFIED`.
 
-### 3. Đọc comment đúng vùng panel
+### 3. Đóng panel sau gửi
 
-Sau khi asset panel được xác minh, flow chọn 2–4 lượt vuốt. Mỗi lượt chỉ dùng `PhoneScroll` theo điểm với `DIRECTION=Up`:
+Khi Send đã được tìm/chạm, flow chờ 3 giây, tìm `tiktok_closecomment.img64`, chạm Close, chờ 3 giây và kiểm tra lại `tiktok_verifypanelcomment.img64`.
 
-| Tham số | Khoảng |
-| --- | --- |
-| X | 360–1080 |
-| Điểm bắt đầu Y | 1850–2250 |
-| Điểm kết thúc Y | 1150–1500 |
-| Thời lượng | 350–550 ms |
+- `$commentPanelCloseResult = COMMENT_PANEL_CLOSED`: panel không còn thấy.
+- `COMMENT_PANEL_STILL_OPEN`: panel vẫn còn thấy.
+- `COMMENT_CLOSE_ICON_NOT_FOUND`: không tìm được nút Close.
 
-Điểm bắt đầu thấp hơn điểm kết thúc, kết hợp `DIRECTION=Up`, giữ thao tác là scroll danh sách comment. Không có nhánh scroll xuống, vì thao tác sai vùng/hướng có thể chạm vùng video hoặc kích hoạt ô nhập ở bài không có comment.
+`$flow2Result` giữ riêng kết quả gửi, còn `$commentPanelCloseResult` giữ kết quả đóng panel.
 
-### 4. Đóng panel, kể cả trường hợp bàn phím ảo
+## `flow_3`: xem video, đọc comment và đóng panel
 
-1. Chờ 2 giây sau lượt scroll cuối.
-2. `Image search` `tiktok_closecomment.img64` (ngưỡng `0.8`), rồi chạm tọa độ tìm được.
-3. Chờ 3 giây và tìm lại `tiktok_verifypanelcomment.img64`.
-4. Nếu panel đã biến mất, ghi `COMMENT_PANEL_CLOSED`.
-5. Nếu panel vẫn còn, flow tìm lại Close, chạm lần hai, chờ 3 giây và xác minh lại. Nhánh này xử lý bài không có comment, nơi lượt chạm Close đầu chỉ có thể đóng bàn phím ảo che panel.
-6. Lần thử hai ghi một trong `COMMENT_PANEL_CLOSED_AFTER_RETRY`, `COMMENT_PANEL_STILL_OPEN_AFTER_RETRY`, hoặc `COMMENT_CLOSE_RETRY_ICON_NOT_FOUND`.
+`flow_3` dùng cùng gate **For You**, `wm size`, ba lượt vuốt video, và điểm Comment `1337,1897 ±15 px` như `flow_2`. Đây là flow đọc, không nhập hay gửi text.
 
-Không coi `COMMENT_PANEL_CLOSED*` là bằng chứng phổ quát cho mọi phiên bản UI: đó là kết quả asset probe hiện tại và cần canary lại khi TikTok Lite hoặc layout đổi.
+1. Sau chạm Comment, flow chờ 6–10 giây và xác minh panel bằng `tiktok_verifypanelcomment.img64`.
+2. Khi panel đã mở, flow chọn 2–4 lượt và chỉ dùng `PhoneScroll` theo điểm với `DIRECTION=Up`:
+
+   | Tham số | Khoảng |
+   | --- | --- |
+   | X | 360–1080 |
+   | Điểm bắt đầu Y | 1850–2250 |
+   | Điểm kết thúc Y | 1150–1500 |
+   | Thời lượng | 350–550 ms |
+
+3. Flow chờ 2 giây, tìm/chạm `tiktok_closecomment.img64`, rồi xác minh panel. Nếu panel còn thấy, flow tìm/chạm Close thêm một lần và xác minh lại sau 3 giây.
+
+Nhánh retry xử lý tình huống bài không có comment, khi chạm Close đầu chỉ đóng bàn phím ảo. `flow_3` dùng các mã `COMMENT_PANEL_CLOSED`, `COMMENT_PANEL_CLOSED_AFTER_RETRY`, `COMMENT_PANEL_STILL_OPEN_AFTER_RETRY` và `COMMENT_CLOSE_RETRY_ICON_NOT_FOUND` trong biến lịch sử `$flow2Result`.
 
 ## Bằng chứng hiện có
 
@@ -139,7 +145,9 @@ Không coi `COMMENT_PANEL_CLOSED*` là bằng chứng phổ quát cho mọi phi�
 | XPath For You | Đã khớp trong các lần probe trên Device 05 |
 | Vuốt tỷ lệ/ngẫu nhiên | Đã chạy trong probe; `PhoneScroll` chuyển video |
 | Like fixed-point | Quan sát thực tế xác nhận thao tác Like tại vùng `1333,1672` trên Device 05 |
-| `flow_1` hiện tại | Người vận hành xác nhận chạy thật thành công |
+| `flow_0_v2`, `flow_1`, `flow_2`, `flow_3` hiện tại | Người vận hành xác nhận đã kiểm thử độc lập thành công ngày 16-10-2026 |
+| `flow_2` gửi comment | Log kiểm thử có `COMMENT_SEND_VERIFIED` và `COMMENT_PANEL_CLOSED` |
+| `flow_3` đọc comment | Đã kiểm thử độc lập thao tác scroll lên trong panel và đóng panel |
 | Xác minh Liked bằng XPath/ảnh | Không đáng tin cậy, nên đã loại khỏi flow chính |
 
 ## Checklist mỗi lần canary
@@ -154,8 +162,14 @@ Không coi `COMMENT_PANEL_CLOSED*` là bằng chứng phổ quát cho mọi phi�
 ### Canary cho `flow_2`
 
 1. Main đã nạp `src.gscript` hiện gọi `flow_2`; TikTok Lite đang ở **For You**.
-2. Kiểm tra `$screenSizeRaw`, `$commentPos` và `COMMENT_TAP_TARGET_<x,y>` trước khi đánh giá phần comment.
-3. Chỉ tiếp tục nếu có `COMMENT_PANEL_OPEN`; quan sát 2–4 lượt vuốt vẫn nằm trong danh sách comment.
-4. Sau Close, xác nhận `$flow2Result` là `COMMENT_PANEL_CLOSED` hoặc `COMMENT_PANEL_CLOSED_AFTER_RETRY`. Nếu còn `COMMENT_PANEL_STILL_OPEN_AFTER_RETRY`, dừng và lưu bằng chứng UI tối thiểu để cập nhật asset/toạ độ.
+2. Kiểm tra `$screenSizeRaw`, `$commentPos`, `$commentInputPos` và `$sendButtonPos`.
+3. Chỉ tiếp tục nếu có `COMMENT_PANEL_OPEN`; sau gửi kiểm tra `$flow2Result` là `COMMENT_SEND_VERIFIED` hoặc `COMMENT_SEND_TAPPED_NOT_VERIFIED`.
+4. Kiểm tra `$commentPanelCloseResult` là `COMMENT_PANEL_CLOSED`. Nếu panel còn thấy, lưu bằng chứng UI tối thiểu để cập nhật asset/toạ độ.
+
+### Canary cho `flow_3`
+
+1. Chạy `flow_3` riêng khi TikTok Lite ở **For You**.
+2. Sau `COMMENT_PANEL_OPEN`, quan sát 2–4 lượt vuốt vẫn nằm trong danh sách comment.
+3. Sau Close, kiểm tra `$flow2Result` là `COMMENT_PANEL_CLOSED` hoặc `COMMENT_PANEL_CLOSED_AFTER_RETRY`.
 
 Nếu XPath **For You** timeout, dừng flow và khôi phục app/feed trước khi chạy lại. Không thêm click mù hoặc selector suy đoán vào flow này.
