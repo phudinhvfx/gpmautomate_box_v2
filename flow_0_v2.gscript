@@ -11,7 +11,7 @@
         "id": "00c1b1e8-8b61-4fc2-a5cf-2915d3f3e7a9",
         "display_text": "Normal block",
         "raw_input": null,
-        "comment": "GHI CHÚ FLOW 0 V2\n- Không ép Android user trong lệnh ADB: PhoneExecuteAdb của Runtime GPM lỗi với Android user phụ.\n- Thử lần lượt các activity TikTok Lite đã kiểm chứng; chỉ dừng thành công khi activity tương ứng ở foreground.\n- Tạm chờ 1.5–2.5 giây cho feed ổn định. Đây chưa phải là xác minh feed.\n- Sẽ thêm Wait element khi có XPath TikTok Lite được người vận hành cung cấp."
+        "comment": "GHI CHÚ FLOW 0 V2\n- Không ép Android user trong lệnh ADB: PhoneExecuteAdb của Runtime GPM lỗi với Android user phụ.\n- Thử lần lượt các activity TikTok Lite đã kiểm chứng; chỉ dừng thành công khi activity tương ứng ở foreground.\n- Sau khi launcher đã foreground, chờ tối đa 15 giây để XPath For You xuất hiện, xác nhận feed TikTok Lite sẵn sàng."
       },
       {
         "$type": "GPMAutomateEditor.Models.ActionNode, GPMAutomateEditor.Models",
@@ -145,15 +145,15 @@
       },
       {
         "$type": "GPMAutomateEditor.Models.ActionNode, GPMAutomateEditor.Models",
-        "type": 7,
-        "element_xpath": null,
-        "output_variable_name": null,
+        "type": 120,
+        "element_xpath": "//node[@text=\"For You\" and @class=\"android.widget.Button\"]",
+        "output_variable_name": "",
         "delay": "0,0",
         "continue_on_error": false,
-        "id": "96a45ef4-3dde-4e51-b25e-7e8439cc522f",
-        "display_text": "Delay",
-        "raw_input": "[{\"Key\":\"MIN\",\"Value\":\"1500\"},{\"Key\":\"MAX\",\"Value\":\"2500\"}]",
-        "comment": "wait TikTok Lite feed..."
+        "id": "2a159736-0dd2-4520-a950-1c8afba0aa93",
+        "display_text": "Wait element",
+        "raw_input": "[{\"Key\":\"TIME_OUT\",\"Value\":\"15\"}]",
+        "comment": "wait TikTok Lite For You"
       }
     ],
     "expanded": true,
